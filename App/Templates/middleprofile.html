@@ -1,0 +1,36 @@
+    <!-- Middle Column -->
+    <div class="w3-col m7">
+
+    <style>
+        label {
+            float: left;
+            display: inline-block;
+            width: 10em;
+            text-align: right;
+            margin-right: 1em;
+        }
+        input.submit {
+            margin-left: 11em;
+        }
+    </style>
+    <div class="w3-row-padding">
+        <div class="w3-col m12">
+            <div class="w3-card-2 w3-round w3-white">
+                <div class="w3-container w3-padding">
+                    <form name="userprofile" action="http://ts.local/?r=profile/<?=$submitAction?>&user_id=<?=$user_id?>" method="post">
+                        <p><label for="userEmail">e-mail</label><input type="email" name="userEmail" id="userEmail" value="<?=$userEmail?>" disabled></p>
+                        <p><label for="userFirstName">Имя</label><input type="text" name="userFirstName" id="userFirstName" value="<?=$userFirstName?>" <?=$allowEdit?>></p>
+                        <p><label for="userMiddleName">Отчество</label><input type="text" name="userMiddleName" id="userMiddleName" value="<?=$userMiddleName?>" <?=$allowEdit?>></p>
+                        <p></p><label for="userLastName">Фамилия</label><input type="text" name="userLastName" id="userLastName" value="<?=$userLastName?>" <?=$allowEdit?>></p>
+                        <p><label for="userBirthday">Дата рождения</label><input type="date" name="userBirthday" id="userBirthday" value="<?=$userBirthday?>" disabled></p>
+                        <p><label for="userSex">Пол</label><input type="text" name="userSex" id="userSex" value="<?=$userSex?>" disabled></p>
+                        <input type="submit" class="submit" value="<?=$submitValue?>">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <!-- End Middle Column -->
+    </div>
