@@ -39,7 +39,9 @@ abstract class ControllerBase
             $modelClassName = $this->modelsNameSpace . $modelName;
             $model = new $modelClassName($modelAction, $this->db);
             $responseVars = $model->getResponse($responseArgs);
-            $this->templateInfo = array_merge($this->templateInfo, $responseVars);
+            if (is_array($responseVars)) {
+                $this->templateInfo = array_merge($this->templateInfo, $responseVars);
+            }
         }
         $this->templateInfo = array_merge($this->templateInfo, $args);
         $this->setControllerVars($args);
