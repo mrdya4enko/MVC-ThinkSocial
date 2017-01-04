@@ -29,6 +29,7 @@
                         <p><label for="userBirthday">Дата рождения</label><input type="date" name="birthday" id="userBirthday" value="<?=$user->birthday?>" <?=$allowEdit?>></p>
                         <p><label for="userSex">Пол</label> <input type="radio" name="sex" id="userSex" value="female" <?=(($user->sex=='female')? "checked ":"")?><?=$allowEdit?>> Женский
                             <input type="radio" name="sex" id="userSex" value="male" <?=(($user->sex=='male')? "checked ":"")?><?=$allowEdit?>> Мужской</p>
+                        </p>
                         <input type="submit" class="submit" value="<?=$submitValue?>">
                     </form>
                 </div>
@@ -45,10 +46,10 @@
                         <?php foreach ($userPhones as $userPhone): ?>
                             <p><label for="userPhone">Телефон</label><input type="text" name="phone" id="userPhone" value="<?=$userPhone->phone?>" disabled>
                                 <input type="hidden" name="phoneID" value="<?=$userPhone->id?>">
-                                <input type="submit" value="Удалить"></p>
+                                <button type="submit" formaction="http://ts.local/?r=profile/delete&user_id=<?=$user_id?>&phone_id=<?=$userPhone->id?>">Удалить</button>
                         <?php endforeach; ?>
                         <p><label for="userLastName" class="<?=$submitPhoneAction?>">Введите номер</label><input type="text" name="newPhone" class="<?=$submitPhoneAction?>"></p>
-                        <input type="submit" class="submit" value="<?=$submitPhoneValue?>">
+                        <input type="submit" class="submit submitPhone" value="<?=$submitPhoneValue?>">
                     </form>
                 </div>
             </div>
@@ -58,3 +59,4 @@
 
         <!-- End Middle Column -->
     </div>
+

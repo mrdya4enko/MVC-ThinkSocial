@@ -11,4 +11,5 @@ return array ("index/show" => array ("controller" => "Index", "action" => "show"
     "profile/edit" => array ("controller" => "Profile", "action" => "edit"),
     "profile/update" => array ("controller" => "Profile", "action" => "update"),
     "profile/input" => array ("controller" => "Profile", "action" => "input"),
-    "profile/insert" => array ("controller" => "Profile", "action" => "insert"));
+    "profile/insert" => array ("controller" => "Profile", "action" => "insert"),
+    "profile/delete" => array ("controller" => "Profile", "action" => "delete"));

@@ -69,13 +69,10 @@ Class Profile Extends Page
                 $newPhone->insert();
                 header('Location: http://ts.local/?r=profile/show&' . http_build_query($this->args));
                 break;
-/*            case "delete":
-                \App\Models\Phone::delete(array('user_id' => $this->args['user_id']), "");
-                $newPhone->user_id = $this->args['user_id'];
-                $newPhone->phone = $_POST['newPhone'];
-                $newPhone->insert();
-                header('Location: http://ts.local/?r=profile/show&' . http_build_query($this->args));
-                break;*/
+            case "delete":
+                \App\Models\Phone::delete($this->args['phone_id']);
+                header('Location: http://ts.local/?r=profile/show&' . http_build_query(array("user_id" => $this->args['user_id'])));
+                break;
         }
     }
 }

@@ -37,6 +37,11 @@ abstract class ActiveRecord
         self::$queryString .= $addCondition;
         return self::execSQL($foreignKey, 'select');
     }
+    public static function delete($id)
+    {
+        self::$queryString = "DELETE FROM " . static::$tableName . " WHERE id=:id";
+        self::execSQL(array('id' => $id), 'delete');
+    }
     public function update()
     {
         self::$queryString = "UPDATE " . static::$tableName . " SET ";
@@ -91,7 +96,7 @@ abstract class ActiveRecord
         $className = get_called_class();
         $query = self::$db->prepare(self::$queryString);
         $query->execute($queryParams);
-        if ($action == 'update' || $action == 'insert') {
+        if ($action == 'update' || $action == 'insert' || $action == 'delete') {
             return;
         }
         $rows = $query->fetchAll(\PDO::FETCH_ASSOC);
