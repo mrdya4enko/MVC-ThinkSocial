@@ -38,6 +38,7 @@ class Application
         $this->db = new \PDO($connectStr, $this->config['user'], $this->config['password']);
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->db->exec('SET NAMES "utf8"');
+        $_ENV['db'] = $this->db;
     }
     private function setRouter()
     {
@@ -51,11 +52,11 @@ class Application
     }
     private function doProcess ()
     {
-        $this->templateInfo = $this->controller['ref']->getTemplateInfo($this->controller['args']);
+        $this->templateInfo = $this->controller['ref']->index();
     }
     private function process ()
     {
-        $this->controller = $this->router->getController("App\\" .  $this->config['modelsPath'] . "\\", $this->db);
+        $this->controller = $this->router->getController("App\\" .  $this->config['modelsPath'] . "\\");
         $this->doProcess();
     }
     private function setTemplate()

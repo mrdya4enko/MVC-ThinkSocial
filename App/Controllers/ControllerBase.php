@@ -9,42 +9,27 @@ namespace App\Controllers   ;
 
 abstract class ControllerBase
 {
-    private $modelsNameSpace;
-    private $db;
+    protected $templateInfo = array('templateNames' => array(),
+                                    'title' => '');
     protected $modelsAction;
-    protected $modelsPool = array();
-    protected $templateInfo = array('templateNames' => array(), 'title' => '');
+    protected $args;
 
-    public function __construct($modelsNameSpace, $db, $modelsAction)
+    public function __construct($modelsAction, $args)
     {
-        $this->db = $db;
-        $this->modelsNameSpace = $modelsNameSpace;
         $this->modelsAction = $modelsAction;
-        $this->setModelsPool();
-        $this->setTemplateNames();
-        $this->setTitle();
+        $this->args = $args;
     }
-    protected abstract function setModelsPool();
-    protected abstract function setTemplateNames();
-    protected abstract function setTitle();
-    protected abstract function setControllerVars($args);
-    public function getTemplateInfo($args)
+    protected abstract function getTemplateNames();
+    protected abstract function getTitle();
+    protected abstract function getControllerVars();
+    public function index()
     {
-        if (isset($_POST)) {
-            $responseArgs = array_merge($args, $_POST);
-        } else {
-            $responseArgs = $args;
+        $this->getTemplateNames();
+        $this->getTitle();
+        $this->templateInfo = array_merge($this->templateInfo, $this->args);
+        if (is_array($this->getControllerVars())) {
+            $this->templateInfo = array_merge($this->templateInfo, $this->getControllerVars());
         }
-        foreach ($this->modelsPool as $modelName => $modelAction) {
-            $modelClassName = $this->modelsNameSpace . $modelName;
-            $model = new $modelClassName($modelAction, $this->db);
-            $responseVars = $model->getResponse($responseArgs);
-            if (is_array($responseVars)) {
-                $this->templateInfo = array_merge($this->templateInfo, $responseVars);
-            }
-        }
-        $this->templateInfo = array_merge($this->templateInfo, $args);
-        $this->setControllerVars($args);
         return $this->templateInfo;
     }
 }

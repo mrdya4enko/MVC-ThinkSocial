@@ -7,18 +7,19 @@ namespace App\Models;
  * Time: 13:29
  */
 
-class UserAvatar extends ModelQuery
+class UserAvatar extends ActiveRecord
 {
-    protected function setQueryParams()
+    protected static $tableName = 'users_avatars';
+
+    public static function getByForeign($foreignKey, $addCondition)
     {
-            $this->queryParams["select"] = array("string" => "SELECT ua.file_name AS avatarFile
-                                                                FROM users_avatars ua
-                                                              WHERE ua.user_id=:user_id
-                                                                AND ua.status='active'",
-                                            "params" => array("user_id" => ""));
-    }
-    protected function convertOutput()
-    {
-        $this->responseVars = empty($this->queryResult)? array('avatarFile' => 'default.jpeg') : $this->queryResult[0];
+        $result = parent::getByForeign($foreignKey, $addCondition);
+        if (count($result) == 0) {
+            $result = new UserAvatar();
+            $result->user_id = $foreignKey['user_id'];
+            $result->file_name = 'default.jpeg';
+            return $result;
+        }
+        return $result[0];
     }
 }

@@ -7,7 +7,7 @@ namespace App\Models;
  * Time: 13:29
  */
 
-class News extends ActiveRecord
+class AlbumPhoto extends ActiveRecord
 {
-    protected static $tableName = 'news';
+    protected static $tableName = 'albums_photos';
 }

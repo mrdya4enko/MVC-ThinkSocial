@@ -26,10 +26,59 @@ insert into users_news (news_id, user_id) values (3,5), (4,5), (5,5);
 insert into users_avatars (user_id, file_name) values (5, 'red.JPG');
 insert into users_avatars (user_id, file_name) values (4, 'zveropolis.jpeg');
 
-insert into friends (user_sender, user_receiver) values (4,5);
-
 insert into users_cities (user_id, city_id) values (5,2), (4,1), (6,3);
 
+insert into comments (user_id, text) values
+(4, 'Можно с Вами познакомиться?  :)'),
+(6, 'Просто красотка'),
+(4, 'Если из полутора миллиардов китайцев построить пирамиду, то она достанет до Марса'),
+(6, 'Присоединяюсь! Мой сыночек пошел в первый класс'),
+(6, 'А это что еще за друг?');
+
+insert into users_avatars_comments (user_avatar_id, comment_id) values (1, 1), (1, 2);
+
+insert into news_comments (news_id, comment_id) values (3, 3), (4, 4);
+
+insert into albums_photos_comments (comment_id, albums_photos_id) values (5, 1);
+
+DROP TABLE IF EXISTS `friends`;
+CREATE TABLE `friends` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_sender` INT(11) NOT NULL,
+  `user_receiver` INT(11) NOT NULL,
+  `status` enum('applied','unapplied') NOT NULL DEFAULT 'unapplied',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_table1_users1_idx` (`user_sender`),
+  KEY `fk_table1_users2_idx` (`user_receiver`),
+  CONSTRAINT `fk_table1_users1` FOREIGN KEY (`user_sender`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT `fk_table1_users2` FOREIGN KEY (`user_receiver`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE  RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE friends ADD UNIQUE KEY sender_receiver (user_sender, user_receiver);
+
+DELIMITER //
+CREATE TRIGGER friends_insert
+	BEFORE INSERT
+    ON friends FOR EACH ROW
+BEGIN
+	DECLARE row_num INT;
+	SELECT COUNT(*) FROM friends
+		WHERE user_receiver=NEW.user_sender
+			AND user_sender=NEW.user_receiver
+		INTO row_num;
+	IF row_num>0 THEN
+		SIGNAL SQLSTATE '02000' SET message_text="Такая дружба уже существует";
+	END IF;
+	IF NEW.user_receiver=NEW.user_sender THEN
+		SIGNAL SQLSTATE '02000' SET message_text="Дружба с собой невозможна";
+	END IF;
+END //
+DELIMITER ;
+
+insert into friends (user_sender, user_receiver) values (4,5);
+
+INSERT INTO `friends` (user_sender, user_receiver, status) VALUES (1,2,'applied'),(1,3,'unapplied'),(1,4,'applied'),(5,1,'applied'),(2,3,'applied');
+
 insert into friends (user_sender, user_receiver) values (6,5);
-
-

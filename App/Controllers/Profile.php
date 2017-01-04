@@ -7,28 +7,13 @@ namespace App\Controllers;
  * Time: 13:31
  */
 
-Class Profile Extends ControllerBase
+Class Profile Extends Page
 {
-    protected function setModelsPool()
-    {
-        if ($this->modelsAction == 'update') {
-            $this->modelsPool = array ('User' => 'update');
-        } else {
-            $this->modelsPool = array ('User' => 'select',
-                'UserAvatar' => 'select',
-                'Cities' => 'select',
-                'Groups' => 'select',
-                'Albums' => 'select',
-                'Phones' => 'select',
-                'FriendRequests' => 'select',
-                'Notifications' => 'select');
-        }
-    }
-    protected function setTemplateNames()
+    protected function getTemplateNames()
     {
         $this->templateInfo['templateNames'] = array('head', 'navbar', 'leftcolumn', 'middleprofile', 'rightcolumn', 'footer');
     }
-    protected function setTitle()
+    protected function getTitle()
     {
         switch ($this->modelsAction) {
             case "show":
@@ -37,24 +22,60 @@ Class Profile Extends ControllerBase
             case "edit":
                 $this->templateInfo['title'] = 'Редактирование профиля';
                 break;
+            case "input":
+                $this->templateInfo['title'] = 'Добавление телефона';
+                break;
         }
     }
-    protected function setControllerVars($args)
+    protected function getControllerVars()
     {
         switch ($this->modelsAction) {
             case "show":
-                $this->templateInfo['submitAction']='edit';
-                $this->templateInfo['submitValue']='Редактировать';
-                $this->templateInfo['allowEdit']='disabled';
-                break;
+                $result = array('submitAction' => 'edit',
+                           'submitValue' => 'Редактировать',
+                           'submitPhoneAction' => 'input',
+                           'submitPhoneValue' => 'Добавить',
+                           'allowEdit' => 'disabled');
+                $userPhones = \App\Models\Phone::getByForeign(array('user_id' => $this->args['user_id']), "");
+                return array_merge($result, parent::getControllerVars(), array("userPhones" => $userPhones));
             case "edit":
-                $this->templateInfo['submitAction']='update';
-                $this->templateInfo['submitValue']='Подтвердить';
-                $this->templateInfo['allowEdit']='enabled';
-                break;
+                $result = array('submitAction' => 'update',
+                           'submitValue' => 'Подтвердить',
+                           'submitPhoneAction' => 'input',
+                           'submitPhoneValue' => 'Добавить',
+                           'allowEdit' => 'enabled');
+                $userPhones = \App\Models\Phone::getByForeign(array('user_id' => $this->args['user_id']), "");
+                return array_merge($result, parent::getControllerVars(), array("userPhones" => $userPhones));
+            case "input":
+                $result = array('submitAction' => 'edit',
+                            'submitValue' => 'Редактировать',
+                            'submitPhoneAction' => 'insert',
+                            'submitPhoneValue' => 'OK',
+                            'allowEdit' => 'disabled');
+                $userPhones = \App\Models\Phone::getByForeign(array('user_id' => $this->args['user_id']), "");
+                return array_merge($result, parent::getControllerVars(), array("userPhones" => $userPhones));
             case "update":
-                header('Location: http://ts.local/?r=profile/show&' . http_build_query($args));
+                $user = \App\Models\User::getByID($this->args['user_id']);
+                foreach ($_POST as $field => $value) {
+                    $user->{$field} = $value;
+                }
+                $user->update();
+                header('Location: http://ts.local/?r=profile/show&' . http_build_query($this->args));
                 break;
+            case "insert":
+                $newPhone = new \App\Models\Phone();
+                $newPhone->user_id = $this->args['user_id'];
+                $newPhone->phone = $_POST['newPhone'];
+                $newPhone->insert();
+                header('Location: http://ts.local/?r=profile/show&' . http_build_query($this->args));
+                break;
+/*            case "delete":
+                \App\Models\Phone::delete(array('user_id' => $this->args['user_id']), "");
+                $newPhone->user_id = $this->args['user_id'];
+                $newPhone->phone = $_POST['newPhone'];
+                $newPhone->insert();
+                header('Location: http://ts.local/?r=profile/show&' . http_build_query($this->args));
+                break;*/
         }
     }
 }

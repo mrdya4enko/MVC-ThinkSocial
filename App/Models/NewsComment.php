@@ -7,7 +7,7 @@ namespace App\Models;
  * Time: 13:29
  */
 
-class News extends ActiveRecord
+class NewsComment extends ActiveRecord
 {
-    protected static $tableName = 'news';
+    protected static $tableName = 'news_comments';
 }

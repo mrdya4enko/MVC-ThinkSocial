@@ -20,7 +20,7 @@ class Router
         $this->controlNameSpace = $nameSpace;
     }
 
-    public function getController($modelsNameSpace, $db)
+    public function getController($modelsNameSpace)
     {
         $controller = array ('ref' => '',
                              'action' => '',
@@ -35,7 +35,7 @@ class Router
 
         $controlClassName = $this->controlNameSpace . $controllerNameAction['controller'];
         $controller['action'] = $controllerNameAction['action'];
-        $controller['ref'] = new $controlClassName($modelsNameSpace, $db, $controller['action']);
+        $controller['ref'] = new $controlClassName($controller['action'], $controller['args']);
 
         return $controller;
     }

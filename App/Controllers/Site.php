@@ -7,28 +7,10 @@ namespace App\Controllers;
  * Time: 13:31
  */
 
-Class Site Extends ControllerBase
+Class Site Extends Page
 {
-    protected function setModelsPool()
-    {
-        $this->modelsPool = array ('User' => 'select',
-            'UserAvatar' => 'select',
-            'Cities' => 'select',
-            'Groups' => 'select',
-            'Albums' => 'select',
-            'News' => 'select',
-            'FriendRequests' => 'select',
-            'Notifications' => 'select');
-    }
-    protected function setTemplateNames()
+    protected function getTemplateNames()
     {
         $this->templateInfo['templateNames'] = array('head', 'navbar', 'leftcolumn', 'middlecolumn', 'rightcolumn', 'footer');
-    }
-    protected function setTitle()
-    {
-        $this->templateInfo['title'] = 'ThinkSocial';
-    }
-    protected function setControllerVars($args)
-    {
     }
 }
