@@ -1,5 +1,6 @@
 <?php
 namespace App\Models;
+use App\Config\Db;
 /**
  * Created by PhpStorm.
  * User: bond
@@ -15,7 +16,7 @@ abstract class ActiveRecord
 
     private static function setDB()
     {
-        self::$db = $_ENV['db'];
+        self::$db = Db::getConnection();
     }
     public static function getByID($id)
     {
@@ -79,7 +80,7 @@ abstract class ActiveRecord
             }
         }
         self::$queryString .= " ($columns) VALUES ($params)";
-        self::execSQL(get_object_vars($this), 'insert');
+        $this->id = self::execSQL(get_object_vars($this), 'insert');
     }
     public static function count($foreignKey, $addCondition)
     {
@@ -95,8 +96,11 @@ abstract class ActiveRecord
         self::setDB();
         $className = get_called_class();
         $query = self::$db->prepare(self::$queryString);
-        $query->execute($queryParams);
-        if ($action == 'update' || $action == 'insert' || $action == 'delete') {
+        $queryResult = $query->execute($queryParams);
+        if ($queryResult && $action == 'insert') {
+            return (self::$db)->lastInsertId();
+        }
+        if ($action == 'update' || $action == 'delete') {
             return;
         }
         $rows = $query->fetchAll(\PDO::FETCH_ASSOC);

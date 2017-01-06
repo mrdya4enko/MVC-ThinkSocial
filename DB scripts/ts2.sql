@@ -82,3 +82,5 @@ insert into friends (user_sender, user_receiver) values (4,5);
 INSERT INTO `friends` (user_sender, user_receiver, status) VALUES (1,2,'applied'),(1,3,'unapplied'),(1,4,'applied'),(5,1,'applied'),(2,3,'applied');
 
 insert into friends (user_sender, user_receiver) values (6,5);
+
+insert into passwords (user_id, password) values (5, '111111');

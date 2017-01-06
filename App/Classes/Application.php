@@ -10,7 +10,6 @@ namespace App\Classes;
 class Application
 {
     private $config;
-    private $db;
     private $router;
     private $templateInfo;
     private $template;
@@ -29,34 +28,28 @@ class Application
     }
     private function setConfig()
     {
-        $this->config = include SITE_PATH . 'App/Includes/config.php';
-    }
-    private function setDB()
-    {
-        $connectStr = "{$this->config['connection']}:host={$this->config['host']};" .
-                      "dbname={$this->config['dbName']}";
-        $this->db = new \PDO($connectStr, $this->config['user'], $this->config['password']);
-        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->db->exec('SET NAMES "utf8"');
-        $_ENV['db'] = $this->db;
+        $this->config = include ROOT . '/App/Config/config.php';
     }
     private function setRouter()
     {
-        $this->router = new Router("App\\" . $this->config['controllersPath'] . "\\");
+        $this->router = new Router("App\\" . $this->config['controlNameSpace'] . "\\");
     }
     private function initialize ()
     {
         $this->setConfig();
-        $this->setDB();
         $this->setRouter();
     }
     private function doProcess ()
     {
-        $this->templateInfo = $this->controller['ref']->index();
+        if (is_callable(array($this->controller['ref'], $this->controller['actionName']))) {
+            $this->templateInfo = call_user_func_array(array($this->controller['ref'], $this->controller['actionName']), $this->controller['args']);
+        } else {
+            $this->templateInfo = $this->controller['ref']->index($this->controller['action'], $this->controller['args']);
+        }
     }
     private function process ()
     {
-        $this->controller = $this->router->getController("App\\" .  $this->config['modelsPath'] . "\\");
+        $this->controller = $this->router->run();
         $this->doProcess();
     }
     private function setTemplate()

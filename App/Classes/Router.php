@@ -1,42 +1,94 @@
 <?php
 namespace App\Classes;
 /**
- * Created by PhpStorm.
- * User: bond
- * Date: 12.12.16
- * Time: 12:28
+ * Class Router
+ * Component to operate the routes
  */
+class Router {
 
-class Router
-{
+	/**
+	 * Property to hold an array of routes
+	 * @var array
+	 */
+	private $routes;
+
+    /**
+     * Property to hold a namespace for controllers
+     * @var array
+     */
     private $controlNameSpace;
-    public $controllerFile;
-    public $controllerName;
-    public $controllerAction;
-    public $controllerArgs = array();
 
-    public function __construct($nameSpace)
-    {
-        $this->controlNameSpace = $nameSpace;
-    }
+	/**
+	 * Constructor
+	 */
+	public function __construct($controlNameSpace) {
 
-    public function getController($modelsNameSpace)
-    {
-        $controller = array ('ref' => '',
-                             'action' => '',
-                             'args' => '');
-        $acceptedRoutes = include SITE_PATH . 'App/Includes/routes.php';
-        $route = isset($_GET['r'])? strtolower(trim($_GET['r'], "/")) : 'site/index';
+		$routesPath = ROOT . '/App/Config/routes.php';
 
-        $controllerNameAction = isset($acceptedRoutes[$route])? $acceptedRoutes[$route] :
-            array("controller" => "Site", "action" => "Index");
+        $this->controlNameSpace = $controlNameSpace;
 
-        $controller['args'] = isset($_GET['r'])? array_diff($_GET, array($_GET['r'])):$_GET;
+		$this -> routes =
+		include ($routesPath);
+	}
 
-        $controlClassName = $this->controlNameSpace . $controllerNameAction['controller'];
-        $controller['action'] = $controllerNameAction['action'];
-        $controller['ref'] = new $controlClassName($controller['action'], $controller['args']);
+	/**
+	 * Returns the query string
+	 */
+	private function getURI() {
+		if (!empty($_SERVER['REQUEST_URI'])) {
+			return trim($_SERVER['REQUEST_URI'], '/');
+		}
+	}
 
-        return $controller;
-    }
+	/**
+	 * Method to handle the request
+	 */
+	public function run() {
+
+		$uri = $this -> getURI();
+
+		// Check the availability of this request in the array of routes (routesOld.php)
+		foreach ($this->routes as $uriPattern => $path) {
+
+			// Compare $uriPattern and $uri
+			if (preg_match("~$uriPattern~", $uri)) {
+
+                $internalRoute = preg_replace("~$uriPattern~", $path, $uri);
+
+
+                $segments = explode('/', $internalRoute);
+
+				$controllerName = array_shift($segments) . 'Controller';
+				$controllerName = ucfirst($controllerName);
+
+				$action = array_shift($segments);
+				$actionName = 'action' . ucfirst($action);
+
+				$parameters = $segments;
+
+/*                $controllerFile = ROOT . '/controllers/' . $controllerName . '.php';
+
+				if (file_exists($controllerFile)) {
+					include_once ($controllerFile);
+				}*/
+
+                $controllerName = $this->controlNameSpace.$controllerName;
+                $controllerObject = new $controllerName;
+
+                return array("ref" => $controllerObject,
+                    "actionName" => $actionName,
+                    "action" => $action,
+                    "args" => $parameters);
+
+/*                $result = call_user_func_array(array($controllerObject, $actionName), $parameters);
+
+				// If the controller method is called successfully, shutdown the router
+				if ($result != null) {
+					break;
+				}*/
+			}
+		}
+	}
+
 }
+

@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Time: 13:31
  */
 
-Class Site Extends Page
+Class SiteController Extends PageController
 {
     protected function getTemplateNames()
     {

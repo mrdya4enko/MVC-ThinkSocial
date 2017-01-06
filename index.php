@@ -9,8 +9,10 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+session_start();
+
 // Константы:
-define('SITE_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+define('ROOT', dirname(__FILE__));
 
 require_once 'App/Includes/autoload.php';
 

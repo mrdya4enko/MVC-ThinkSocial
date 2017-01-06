@@ -26,7 +26,7 @@ Class Template
 
         // Show
         foreach ($this->parts as $part) {
-            $path = SITE_PATH . $directory . DIRECTORY_SEPARATOR . $part . '.html';
+            $path = ROOT . DIRECTORY_SEPARATOR . $directory . DIRECTORY_SEPARATOR . $part . '.php';
             if (!file_exists($path)) {
                 trigger_error('Template `' . $part . '` does not exist.', E_USER_NOTICE);
                 return false;

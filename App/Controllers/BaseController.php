@@ -7,23 +7,21 @@ namespace App\Controllers   ;
  * Time: 13:29
  */
 
-abstract class ControllerBase
+abstract class BaseController
 {
     protected $templateInfo = array('templateNames' => array(),
                                     'title' => '');
     protected $modelsAction;
     protected $args;
 
-    public function __construct($modelsAction, $args)
-    {
-        $this->modelsAction = $modelsAction;
-        $this->args = $args;
-    }
     protected abstract function getTemplateNames();
     protected abstract function getTitle();
     protected abstract function getControllerVars();
-    public function index()
+    public function index($modelsAction, $args)
     {
+        $this->modelsAction = $modelsAction;
+        $this->args = $args;
+
         $this->getTemplateNames();
         $this->getTitle();
         $this->templateInfo = array_merge($this->templateInfo, $this->args);
