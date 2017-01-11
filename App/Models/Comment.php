@@ -10,4 +10,10 @@ namespace App\Models;
 class Comment extends ActiveRecord
 {
     protected static $tableName = 'comments';
+    protected static $tableFields = ["id" => "id",
+        "user_id" => "userId",
+        "text" => "text",
+        "status" => "status",
+        "published" => "published",
+    ];
 }

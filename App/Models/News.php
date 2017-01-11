@@ -10,4 +10,11 @@ namespace App\Models;
 class News extends ActiveRecord
 {
     protected static $tableName = 'news';
+    protected static $tableFields = ["id" => "id",
+        "title" => "title",
+        "text" => "text",
+        "picture" => "picture",
+        "status" => "status",
+        "published" => "published",
+    ];
 }

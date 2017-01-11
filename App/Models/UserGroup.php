@@ -10,4 +10,8 @@ namespace App\Models;
 class UserGroup extends ActiveRecord
 {
     protected static $tableName = 'users_groups';
+    protected static $tableFields = ["id" => "id",
+        "group_id" => "groupId",
+        "user_id" => "userId",
+    ];
 }

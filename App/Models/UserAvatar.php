@@ -10,14 +10,19 @@ namespace App\Models;
 class UserAvatar extends ActiveRecord
 {
     protected static $tableName = 'users_avatars';
+    protected static $tableFields = ["id" => "id",
+        "user_id" => "userId",
+        "file_name" => "fileName",
+        "status" => "status",
+    ];
 
-    public static function getByForeign($foreignKey, $addCondition)
+    public static function getByCondition($condition, $addCondition="")
     {
-        $result = parent::getByForeign($foreignKey, $addCondition);
+        $result = parent::getByCondition($condition, $addCondition);
         if (count($result) == 0) {
             $result = new UserAvatar();
-            $result->user_id = $foreignKey['user_id'];
-            $result->file_name = 'default.jpeg';
+            $result->userId = $condition['userId'];
+            $result->fileName = 'default.jpeg';
             return $result;
         }
         return $result[0];

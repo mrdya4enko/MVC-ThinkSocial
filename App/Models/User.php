@@ -11,6 +11,15 @@ use App\Config\Db;
 class User extends ActiveRecord
 {
     protected static $tableName = 'users';
+    protected static $tableFields = ["id" => "id",
+                                    "first_name" => "firstName",
+                                    "middle_name" => "middleName",
+                                    "last_name" => "lastName",
+                                    "email" => "email",
+                                    "birthday" => "birthday",
+                                    "sex" => "sex",
+                                    "status" => "status",
+    ];
 
         /**
          * User Register
@@ -44,7 +53,14 @@ class User extends ActiveRecord
          */
         public static function checkUserData($email, $password)
     {
-        $db = Db::getConnection();
+        $user = User::getByCondition(["email" => $email]);
+        if (! $user) {
+            return false;
+        }
+        $userPassword = Password::getByCondition(["userId" => $user[0]->id, "password" => $password]);
+        return $userPassword? $user[0]->id : false;
+
+/*        $db = Db::getConnection();
 
         $sql = 'SELECT u.id, first_name, middle_name, last_name, email, birthday, sex, status 
                  FROM users u
@@ -62,7 +78,7 @@ class User extends ActiveRecord
         if ($user) {
             return $user['id'];
         }
-        return false;
+        return false;*/
     }
 
         /**
@@ -160,17 +176,7 @@ class User extends ActiveRecord
          */
         public static function checkEmailExists($email)
     {
-        $db = Db::getConnection();
-
-        $sql = 'SELECT COUNT(*) FROM user WHERE email = :email';
-
-        $result = $db->prepare($sql);
-        $result->bindParam(':email', $email, \PDO::PARAM_STR);
-        $result->execute();
-
-        if ($result->fetchColumn())
-            return true;
-        return false;
+        return User::count(["email" => $email]);
     }
 
         /**
@@ -180,17 +186,7 @@ class User extends ActiveRecord
          */
         public static function getUserById($id)
     {
-        $db = Db::getConnection();
-
-        $sql = 'SELECT * FROM user WHERE id = :id';
-
-        $result = $db->prepare($sql);
-        $result->bindParam(':id', $id, \PDO::PARAM_INT);
-
-        $result->setFetchMode(\PDO::FETCH_ASSOC);
-        $result->execute();
-
-        return $result->fetch();
+        return User::getByID($id);
     }
 
 
@@ -199,7 +195,7 @@ class User extends ActiveRecord
         $userId = self::checkLogged();
         $user = self::getUserById($userId);
 
-        return $user['name'];
+        return $user['firstName'];
     }
 
 

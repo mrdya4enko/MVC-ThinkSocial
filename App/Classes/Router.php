@@ -66,29 +66,15 @@ class Router {
 
 				$parameters = $segments;
 
-/*                $controllerFile = ROOT . '/controllers/' . $controllerName . '.php';
-
-				if (file_exists($controllerFile)) {
-					include_once ($controllerFile);
-				}*/
-
                 $controllerName = $this->controlNameSpace.$controllerName;
                 $controllerObject = new $controllerName;
 
-                return array("ref" => $controllerObject,
-                    "actionName" => $actionName,
-                    "action" => $action,
-                    "args" => $parameters);
+                return ["ref" => $controllerObject,
+                        "actionName" => $actionName,
+                        "args" => $parameters];
 
-/*                $result = call_user_func_array(array($controllerObject, $actionName), $parameters);
-
-				// If the controller method is called successfully, shutdown the router
-				if ($result != null) {
-					break;
-				}*/
 			}
 		}
 	}
 
 }
-

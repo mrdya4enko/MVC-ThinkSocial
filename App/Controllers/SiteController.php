@@ -11,6 +11,6 @@ Class SiteController Extends PageController
 {
     protected function getTemplateNames()
     {
-        $this->templateInfo['templateNames'] = array('head', 'navbar', 'leftcolumn', 'middlecolumn', 'rightcolumn', 'footer');
+        $this->templateInfo['templateNames'] = ['head', 'navbar', 'leftcolumn', 'middlecolumn', 'rightcolumn', 'footer'];
     }
 }

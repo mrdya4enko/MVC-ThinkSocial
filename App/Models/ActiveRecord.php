@@ -13,85 +13,61 @@ abstract class ActiveRecord
     private static $db;
     protected static $tableName;
     private static $queryString;
+    protected static $joinedModel = [];
+    protected static $tableFields = [];
 
     private static function setDB()
     {
         self::$db = Db::getConnection();
     }
-    public static function getByID($id)
+
+    private static function getFieldsSelect()
     {
-        self::$queryString = "SELECT * FROM " . static::$tableName . " WHERE id=:id";
-        $result = self::execSQL(array('id' => $id), 'select');
-/*        if (count($result) == 0) {
-            throw new idNotExistsException ("Задано несуществующее значение первичного ключа");
-        } elseif (count($result) > 1) {
-            throw new idNotUniqueException ("Не уникальное значение первичного ключа");
-        }*/
-        return ($result)[0];
-    }
-    public static function getByForeign($foreignKey, $addCondition)
-    {
-        self::$queryString = "SELECT * FROM " . static::$tableName . " WHERE ";
-        foreach ($foreignKey as $key => $value) {
-            self::$queryString .= "$key=:$key";
+        $pieces = [];
+        foreach (static::$tableFields as $fieldDB => $fieldObject) {
+            array_push($pieces, static::$tableName.".$fieldDB AS $fieldObject");
         }
-        self::$queryString .= $addCondition;
-        return self::execSQL($foreignKey, 'select');
+        return implode(", ", $pieces);
     }
-    public static function delete($id)
+
+    private function getFieldsUpdate()
     {
-        self::$queryString = "DELETE FROM " . static::$tableName . " WHERE id=:id";
-        self::execSQL(array('id' => $id), 'delete');
-    }
-    public function update()
-    {
-        self::$queryString = "UPDATE " . static::$tableName . " SET ";
-        $first = true;
-        foreach (get_object_vars($this) as $key => $value) {
-            if (! in_array($key, array ('id'))) {
-                if (!$first) {
-                    $space = ", ";
-                } else {
-                    $space = "";
-                    $first = false;
-                }
-                self::$queryString .= $space . "$key=:$key";
+        $pieces = [];
+        $fields = get_object_vars($this);
+        foreach (static::$tableFields as $fieldDB => $fieldObject) {
+            if (isset($fields[$fieldObject]) && $fieldDB != "id") {
+                array_push($pieces, "$fieldDB=:$fieldObject");
             }
         }
-        self::$queryString .= " WHERE id=:id";
-        self::execSQL(get_object_vars($this), 'update');
+        return implode(", ", $pieces);
     }
-    public function insert()
+
+    private function getFieldsInsert()
     {
-        self::$queryString = "INSERT INTO " . static::$tableName;
-        $first = true;
-        $columns="";
-        $params="";
-        foreach (get_object_vars($this) as $key => $value) {
-            if (! in_array($key, array ('id'))) {
-                if (!$first) {
-                    $space = ", ";
-                } else {
-                    $space = "";
-                    $first = false;
-                }
-                $columns .= $space . $key;
-                $params .= $space . ":$key";
+        $piecesColumns = [];
+        $piecesParams = [];
+        $fields = get_object_vars($this);
+        foreach (static::$tableFields as $fieldDB => $fieldObject) {
+            if (isset($fields[$fieldObject]) && $fieldDB != "id") {
+                array_push($piecesColumns, $fieldDB);
+                array_push($piecesParams, ":$fieldObject");
             }
         }
-        self::$queryString .= " ($columns) VALUES ($params)";
-        $this->id = self::execSQL(get_object_vars($this), 'insert');
+        return [implode(", ", $piecesColumns), implode(", ", $piecesParams)];
     }
-    public static function count($foreignKey, $addCondition)
+
+    private static function getDBCondition($condition)
     {
-        self::$queryString = "SELECT COUNT(*) AS count FROM " . static::$tableName . " WHERE ";
-        foreach ($foreignKey as $key => $value) {
-            self::$queryString .= "$key=:$key";
+        $pieces = [];
+        foreach (static::$tableFields as $fieldDB => $fieldObject) {
+            if (isset($condition[$fieldObject])) {
+                array_push($pieces, "$fieldDB=:$fieldObject");
+            }
         }
-        self::$queryString .= $addCondition;
-        return (self::execSQL($foreignKey, 'select'))[0]->count;
+        return implode(" AND ", $pieces);
     }
-    protected static function execSQL($queryParams, $action)
+
+    private static function execSQL($queryParams, $action)
     {
         self::setDB();
         $className = get_called_class();
@@ -104,7 +80,7 @@ abstract class ActiveRecord
             return;
         }
         $rows = $query->fetchAll(\PDO::FETCH_ASSOC);
-        $result = array();
+        $result = [];
         foreach ($rows as $row) {
             $object = new $className();
             foreach ($row as $field => $value) {
@@ -113,5 +89,92 @@ abstract class ActiveRecord
             array_push($result, $object);
         }
         return $result;
+    }
+
+    private static function getJoin($rows)
+    {
+        $className = get_called_class();
+        if (isset(self::$joinedModel[$className])) {
+            $thisKey = self::$joinedModel[$className]["thisKey"];
+            $joinedName = self::$joinedModel[$className]["joinedName"];
+            $joinedNameShort = substr($joinedName, strrpos($joinedName, '\\') + 1);
+            $joinedKey = self::$joinedModel[$className]["joinedKey"];
+            $addCondition = self::$joinedModel[$className]["addCondition"];
+            foreach ($rows as $row) {
+                if ($joinedKey=='id') {
+                    $value = $joinedName::getByID($row->{$thisKey});
+                } else {
+                    $value = $joinedName::getByCondition([$joinedKey => $row->{$thisKey}], $addCondition);
+                }
+                $row->{lcfirst($joinedNameShort)} = $value;
+            }
+        }
+        return $rows;
+    }
+
+    public static function join($thisModelKey, $joinedModelName, $joinedModelKey, $addCondition="")
+    {
+        $className = get_called_class();
+        self::$joinedModel[$className] = ["thisKey" => $thisModelKey,
+            "joinedName" => $joinedModelName,
+            "joinedKey" => $joinedModelKey,
+            "addCondition" => $addCondition,
+        ];
+    }
+
+    public static function clearJoins()
+    {
+        self::$joinedModel = [];
+    }
+
+    public static function getByID($id)
+    {
+        $fields = self::getFieldsSelect();
+        self::$queryString = "SELECT $fields FROM " . static::$tableName . " WHERE id=:id";
+        $result = self::execSQL(['id' => $id], 'select');
+        return (self::getJoin($result))[0];
+    }
+
+    public static function getByCondition($condition, $addCondition="")
+    {
+        $fields = self::getFieldsSelect();
+        $conditionString = self::getDBCondition($condition);
+        self::$queryString = "SELECT $fields FROM " . static::$tableName . " WHERE $conditionString $addCondition";
+
+        $result = self::execSQL($condition, 'select');
+        return self::getJoin($result);
+    }
+
+    public static function deleteSoft($id)
+    {
+        self::$queryString = "UPDATE " . static::$tableName . " SET deleted=1 WHERE id=:id";
+        self::execSQL(['id' => $id], 'update');
+    }
+
+    public static function delete($id)
+    {
+        self::$queryString = "DELETE FROM " . static::$tableName . " WHERE id=:id";
+        self::execSQL(['id' => $id], 'delete');
+    }
+
+    public function update()
+    {
+        $fields = self::getFieldsUpdate();
+        self::$queryString = "UPDATE " . static::$tableName . " SET $fields  WHERE id=:id";
+        self::execSQL(get_object_vars($this), 'update');
+    }
+
+    public function insert()
+    {
+        list ($columns, $params) = self::getFieldsInsert();
+        self::$queryString = "INSERT INTO " . static::$tableName . " ($columns) VALUES ($params)";
+        $this->id = self::execSQL(get_object_vars($this), 'insert');
+    }
+
+    public static function count($condition, $addCondition="")
+    {
+        $conditionString = self::getDBCondition($condition);
+        self::$queryString = "SELECT COUNT(*) AS count FROM " . static::$tableName . " WHERE $conditionString $addCondition";
+        return (self::execSQL($condition, 'select'))[0]->count;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-return array(
+return [
      // User:
     'user/register' => 'user/register',
     'user/login' => 'user/login',
@@ -21,5 +21,4 @@ return array(
     // Main page
     'index.php' => 'site/index', // actionIndex in SiteController
     '' => 'site/index', // actionIndex in SiteController
-);
-
+];

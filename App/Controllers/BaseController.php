@@ -9,8 +9,8 @@ namespace App\Controllers   ;
 
 abstract class BaseController
 {
-    protected $templateInfo = array('templateNames' => array(),
-                                    'title' => '');
+    protected $templateInfo = ['templateNames' => [],
+                               'title' => ''];
     protected $modelsAction;
     protected $args;
 

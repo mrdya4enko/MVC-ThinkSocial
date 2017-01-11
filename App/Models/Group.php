@@ -10,4 +10,9 @@ namespace App\Models;
 class Group extends ActiveRecord
 {
     protected static $tableName = 'groups';
+    protected static $tableFields = ["id" => "id",
+        "name" => "name",
+        "description" => "description",
+        "status" => "status",
+    ];
 }

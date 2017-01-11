@@ -41,10 +41,10 @@ class Application
     }
     private function doProcess ()
     {
-        if (is_callable(array($this->controller['ref'], $this->controller['actionName']))) {
-            $this->templateInfo = call_user_func_array(array($this->controller['ref'], $this->controller['actionName']), $this->controller['args']);
+        if (is_callable([$this->controller['ref'], $this->controller['actionName']])) {
+            $this->templateInfo = call_user_func_array([$this->controller['ref'], $this->controller['actionName']], $this->controller['args']);
         } else {
-            $this->templateInfo = $this->controller['ref']->index($this->controller['action'], $this->controller['args']);
+            $this->templateInfo = $this->controller['ref']->index($this->controller['actionName'], $this->controller['args']);
         }
     }
     private function process ()

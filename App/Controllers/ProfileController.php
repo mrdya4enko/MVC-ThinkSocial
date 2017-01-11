@@ -1,5 +1,7 @@
 <?php
 namespace App\Controllers;
+use App\Models\{User, Phone};
+
 /**
  * Created by PhpStorm.
  * User: bond
@@ -11,68 +13,68 @@ Class ProfileController Extends PageController
 {
     protected function getTemplateNames()
     {
-        $this->templateInfo['templateNames'] = array('head', 'navbar', 'leftcolumn', 'middleprofile', 'rightcolumn', 'footer');
+        $this->templateInfo['templateNames'] = ['head', 'navbar', 'leftcolumn', 'middleprofile', 'rightcolumn', 'footer'];
     }
     protected function getTitle()
     {
         switch ($this->modelsAction) {
-            case "show":
+            case "actionShow":
                 $this->templateInfo['title'] = 'Профиль';
                 break;
-            case "edit":
+            case "actionEdit":
                 $this->templateInfo['title'] = 'Редактирование профиля';
                 break;
-            case "input":
+            case "actionInput":
                 $this->templateInfo['title'] = 'Добавление телефона';
                 break;
         }
     }
     protected function getControllerVars()
     {
-        $userId = \App\Models\User::checkLogged();
+        $userId = User::checkLogged();
 
         switch ($this->modelsAction) {
-            case "show":
-                $result = array('submitAction' => 'edit',
+            case "actionShow":
+                $result = ['submitAction' => 'edit',
                            'submitValue' => 'Редактировать',
                            'submitPhoneAction' => 'input',
                            'submitPhoneValue' => 'Добавить',
-                           'allowEdit' => 'disabled');
-                $userPhones = \App\Models\Phone::getByForeign(array('user_id' => $userId), "");
-                return array_merge($result, parent::getControllerVars(), array("userPhones" => $userPhones));
-            case "edit":
-                $result = array('submitAction' => 'update',
+                           'allowEdit' => 'disabled'];
+                $userPhones = Phone::getByCondition(['userId' => $userId]);
+                return array_merge($result, parent::getControllerVars(), ["userPhones" => $userPhones]);
+            case "actionEdit":
+                $result = ['submitAction' => 'update',
                            'submitValue' => 'Подтвердить',
                            'submitPhoneAction' => 'input',
                            'submitPhoneValue' => 'Добавить',
-                           'allowEdit' => 'enabled');
-                $userPhones = \App\Models\Phone::getByForeign(array('user_id' => $userId), "");
-                return array_merge($result, parent::getControllerVars(), array("userPhones" => $userPhones));
-            case "input":
-                $result = array('submitAction' => 'edit',
+                           'allowEdit' => 'enabled'];
+                $userPhones = Phone::getByCondition(['userId' => $userId]);
+                return array_merge($result, parent::getControllerVars(), ["userPhones" => $userPhones]);
+            case "actionInput":
+                $result = ['submitAction' => 'edit',
                             'submitValue' => 'Редактировать',
                             'submitPhoneAction' => 'insert',
                             'submitPhoneValue' => 'OK',
-                            'allowEdit' => 'disabled');
-                $userPhones = \App\Models\Phone::getByForeign(array('user_id' => $userId), "");
-                return array_merge($result, parent::getControllerVars(), array("userPhones" => $userPhones));
-            case "update":
-                $user = \App\Models\User::getByID($userId);
+                            'allowEdit' => 'disabled'];
+                $userPhones = Phone::getByCondition(['userId' => $userId]);
+                return array_merge($result, parent::getControllerVars(), ["userPhones" => $userPhones]);
+            case "actionUpdate":
+                $user = User::getByID($userId);
                 foreach ($_POST as $field => $value) {
                     $user->{$field} = $value;
                 }
                 $user->update();
                 header('Location: http://ts.local/profile/show/');
                 break;
-            case "insert":
-                $newPhone = new \App\Models\Phone();
-                $newPhone->user_id = $userId;
+            case "actionInsert":
+                $newPhone = new Phone();
+                $newPhone->userId = $userId;
                 $newPhone->phone = $_POST['newPhone'];
                 $newPhone->insert();
                 header('Location: http://ts.local/profile/show/');
                 break;
-            case "delete":
-                \App\Models\Phone::delete($_POST['phoneID']);
+            case "actionDelete":
+                Phone::delete($_POST['phoneID']);
                 header('Location: http://ts.local/profile/show/');
                 break;
         }

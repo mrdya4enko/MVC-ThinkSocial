@@ -20,12 +20,12 @@
         <div class="w3-col m12">
             <div class="w3-card-2 w3-round w3-white">
                 <div class="w3-container w3-padding">
-                    <form name="userprofile" action="http://ts.local/profile/<?=$submitAction?>/user_id=<?=$user_id?>" method="post">
+                    <form name="userprofile" action="http://ts.local/profile/<?=$submitAction?>/" method="post">
                         <h4 class="w3-center">My Profile</h4>
                         <p><label for="userEmail">e-mail</label><input type="email" name="email" id="userEmail" value="<?=$user->email?>" disabled></p>
-                        <p><label for="userFirstName">Имя</label><input type="text" name="first_name" id="userFirstName" value="<?=$user->first_name?>" <?=$allowEdit?>></p>
-                        <p><label for="userMiddleName">Отчество</label><input type="text" name="middle_name" id="userMiddleName" value="<?=$user->middle_name?>" <?=$allowEdit?>></p>
-                        <p><label for="userLastName">Фамилия</label><input type="text" name="last_name" id="userLastName" value="<?=$user->last_name?>" <?=$allowEdit?>></p>
+                        <p><label for="userFirstName">Имя</label><input type="text" name="firstName" id="userFirstName" value="<?=$user->firstName?>" <?=$allowEdit?>></p>
+                        <p><label for="userMiddleName">Отчество</label><input type="text" name="middleName" id="userMiddleName" value="<?=$user->middleName?>" <?=$allowEdit?>></p>
+                        <p><label for="userLastName">Фамилия</label><input type="text" name="lastName" id="userLastName" value="<?=$user->lastName?>" <?=$allowEdit?>></p>
                         <p><label for="userBirthday">Дата рождения</label><input type="date" name="birthday" id="userBirthday" value="<?=$user->birthday?>" <?=$allowEdit?>></p>
                         <p><label for="userSex">Пол</label> <input type="radio" name="sex" id="userSex" value="female" <?=(($user->sex=='female')? "checked ":"")?><?=$allowEdit?>> Женский
                             <input type="radio" name="sex" id="userSex" value="male" <?=(($user->sex=='male')? "checked ":"")?><?=$allowEdit?>> Мужской</p>
@@ -41,12 +41,12 @@
         <div class="w3-col m12">
             <div class="w3-card-2 w3-round w3-white">
                 <div class="w3-container w3-padding">
-                    <form name="userphones" action="http://ts.local/profile/<?=$submitPhoneAction?>/user_id=<?=$user_id?>" method="post">
+                    <form name="userphones" action="http://ts.local/profile/<?=$submitPhoneAction?>/" method="post">
                         <h4 class="w3-center">My Phones</h4>
                         <?php foreach ($userPhones as $userPhone): ?>
                             <p><label for="userPhone">Телефон</label><input type="text" name="phone" id="userPhone" value="<?=$userPhone->phone?>" disabled>
                                 <input type="hidden" name="phoneID" value="<?=$userPhone->id?>">
-                                <button type="submit" formaction="http://ts.local/profile/delete/user_id=<?=$user_id?>">Удалить</button>
+                                <button type="submit" formaction="http://ts.local/profile/delete/">Удалить</button>
                         <?php endforeach; ?>
                         <p><label for="userLastName" class="<?=$submitPhoneAction?>">Введите номер</label><input type="text" name="newPhone" class="<?=$submitPhoneAction?>"></p>
                         <input type="submit" class="submit submitPhone" value="<?=$submitPhoneValue?>">

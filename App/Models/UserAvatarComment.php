@@ -10,4 +10,8 @@ namespace App\Models;
 class UserAvatarComment extends ActiveRecord
 {
     protected static $tableName = 'users_avatars_comments';
+    protected static $tableFields = ["id" => "id",
+        "user_avatar_id" => "userAvatarId",
+        "comment_id" => "commentId",
+    ];
 }

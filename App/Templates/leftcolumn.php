@@ -8,10 +8,10 @@
             <div class="w3-card-2 w3-round w3-white">
                 <div class="w3-container">
                     <h4 class="w3-center">My Profile</h4>
-                    <p class="w3-center"><img src="/../avatars/<?=$userAvatar->file_name?>" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
+                    <p class="w3-center"><img src="/../avatars/<?=$userAvatar->fileName?>" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
                     <hr>
                     <!--         <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> Designer, UI</p> -->
-                    <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> г.<?=$userCities[0]->city->name?>, <?=$userCities[0]->country->name?></p>
+                    <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> г.<?=$userCities[0]->city->name?>, <?=$userCities[0]->city->country->name?></p>
                     <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> <?=$user->birthday?></p>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                             <br>
                             <?php foreach ($userAlbums as $userAlbum): ?>
                                 <div class="w3-half">
-                                    <img src="/../photos/<?=$userAlbum->albumPhotos[0]->file_name?>" style="width:100%" class="w3-margin-bottom" alt="<?=$userAlbum->album->name?>">
+                                    <img src="/../photos/<?=$userAlbum->album->albumPhoto[0]->fileName?>" style="width:100%" class="w3-margin-bottom" alt="<?=$userAlbum->album->name?>">
                                 </div>
                             <?php endforeach; ?>
                         </div>

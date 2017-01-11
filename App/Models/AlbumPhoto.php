@@ -10,4 +10,10 @@ namespace App\Models;
 class AlbumPhoto extends ActiveRecord
 {
     protected static $tableName = 'albums_photos';
+    protected static $tableFields = ["id" => "id",
+        "album_id" => "albumId",
+        "file_name" => "fileName",
+        "description" => "description",
+        "status" => "status",
+    ];
 }

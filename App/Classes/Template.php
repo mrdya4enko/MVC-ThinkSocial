@@ -10,7 +10,7 @@ namespace App\Classes;
 Class Template
 {
     private $parts;
-    private $vars = array();
+    private $vars = [];
 
     public function __construct($args)
     {

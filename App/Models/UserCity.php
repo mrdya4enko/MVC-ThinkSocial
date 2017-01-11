@@ -10,4 +10,8 @@ namespace App\Models;
 class UserCity extends ActiveRecord
 {
     protected static $tableName = 'users_cities';
+    protected static $tableFields = ["id" => "id",
+        "user_id" => "userId",
+        "city_id" => "cityId",
+    ];
 }

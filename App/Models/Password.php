@@ -10,4 +10,8 @@ namespace App\Models;
 class Password extends ActiveRecord
 {
     protected static $tableName = 'passwords';
+    protected static $tableFields = ["id" => "id",
+        "user_id" => "userId",
+        "password" => "password",
+    ];
 }

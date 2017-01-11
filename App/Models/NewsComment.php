@@ -10,4 +10,8 @@ namespace App\Models;
 class NewsComment extends ActiveRecord
 {
     protected static $tableName = 'news_comments';
+    protected static $tableFields = ["id" => "id",
+        "news_id" => "newsId",
+        "comment_id" => "commentId",
+    ];
 }

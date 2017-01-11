@@ -10,4 +10,8 @@ namespace App\Models;
 class Album extends ActiveRecord
 {
     protected static $tableName = 'albums';
+    protected static $tableFields = [
+                                     "id"   => "id",
+                                     "name" => "name",
+                                    ];
 }
