@@ -10,17 +10,60 @@ use App\Config\Db;
 
 abstract class ActiveRecord
 {
+    /**
+     * Подключение к БД
+     *
+     * @var \PDO
+     */
     private static $db;
-    protected static $tableName;
+
+    /**
+     * Строка с SQL-запросом
+     *
+     * @var string
+     */
     private static $queryString;
-    protected static $joinedModel = [];
+
+    /**
+     * Имя таблицы БД, которой соответствует модель
+     *
+     * @var string
+     */
+    protected static $tableName;
+
+    /**
+     * Ассоциативный массив: ключ - название поля таблицы в БД, значение -
+     * название поля объекта-модели
+     *
+     * @var array
+     */
     protected static $tableFields = [];
 
+    /**
+     * Ассоциативный массив: ключ - название модели, к которой присоединяются
+     * другие модели; значение - ассоциативный массив с параметрами присоединения
+     *
+     * @var array
+     */
+    protected static $joinedModel = [];
+
+
+    /**
+     * Подключается к БД, используя класс Db
+     *
+     * @return void
+     */
     private static function setDB()
     {
         self::$db = Db::getConnection();
     }
 
+
+    /**
+     * Формирует строку со списком полей таблицы БД для запроса select
+     *
+     * @return string <p>Список полей в формате: имя_таблицы.поле_таблицы AS полеМодели</p>
+     */
     private static function getFieldsSelect()
     {
         $pieces = [];
@@ -30,6 +73,13 @@ abstract class ActiveRecord
         return implode(", ", $pieces);
     }
 
+
+    /**
+     * Формирует строку со списком полей таблицы БД и параметров для
+     * подготавливаемого запроса update
+     *
+     * @return string <p>Список полей в формате: поле_таблицы=:параметрЗапроса</p>
+     */
     private function getFieldsUpdate()
     {
         $pieces = [];
@@ -42,6 +92,12 @@ abstract class ActiveRecord
         return implode(", ", $pieces);
     }
 
+    /**
+     * Формирует массив из двух строк со списком полей таблицы БД и списком
+     * параметров для подготавливаемого запроса insert
+     *
+     * @return string[] <p>Список полей таблицы; список наименований параметров запроса</p>
+     */
     private function getFieldsInsert()
     {
         $piecesColumns = [];
@@ -56,6 +112,17 @@ abstract class ActiveRecord
         return [implode(", ", $piecesColumns), implode(", ", $piecesParams)];
     }
 
+
+    /**
+     * Формирует строку со списком условий выборки для подготавливаемого запроса
+     * select. Условия выборки задаются в виде равенства полей таблицы
+     * передаваемым в функцию значениям
+     *
+     * @param array $condition Ассоциативный массив условий выборки в формате:
+     * [полеМодели => значение]
+     *
+     * @return string <p>Список условий выборки в формате: поле_таблицы=:параметрЗапроса</p>
+     */
     private static function getDBCondition($condition)
     {
         $pieces = [];
@@ -67,6 +134,19 @@ abstract class ActiveRecord
         return implode(" AND ", $pieces);
     }
 
+
+    /**
+     * Запускает выполнение подготовленного SQL-запроса
+     *
+     * @param array $queryParams Ассоциативный массив параметров запроса
+     * в формате: [полеМодели => значение]
+     * @param string $action Вид запроса: select, insert, update или delete
+     *
+     * @return mixed <p>Для запросов update и delete не возвращает ничего.
+     * Для запроса insert возвращает id последней добавленной записи.
+     * Для запроса select возвращает результат в виде массива объектов-
+     * моделей, соответствующих вызывающему классу модели</p>
+     */
     private static function execSQL($queryParams, $action)
     {
         self::setDB();
@@ -91,6 +171,19 @@ abstract class ActiveRecord
         return $result;
     }
 
+
+    /**
+     * Запускает рекурсивный алгоритм поиска присоединенных (joined) моделей
+     * на основании цепочки присоединения моделей; выбирает из БД и создает
+     * соответствующие массивы вложенных объектов. Вызывается из функций
+     * getByID и getByCondition
+     *
+     * @param array $rows Массив объектов-моделей, созданных функциями
+     * getByID и getByCondition
+     *
+     * @return array <p>Массив объектов-моделей, в котором каждый объект
+     * содержит вложенные объекты-модели (массивы объектов-моделей)</p>
+     */
     private static function getJoin($rows)
     {
         $className = get_called_class();
@@ -112,6 +205,20 @@ abstract class ActiveRecord
         return $rows;
     }
 
+
+    /**
+     * Регистрирует присоединение (join) моделей в статическом массиве $joinedModel
+     *
+     * @param string $thisModelKey Имя поля текущей таблицы, по которому
+     * проводится join
+     * @param string $joinedModelName Имя присоединяемой таблицы
+     * @param string $joinedModelKey Имя поля присоединяемой таблицы, по которому
+     * проводится join
+     * @param string $addCondition Необязательная строка дополнительных условий
+     * выборки при соединении таблиц
+     *
+     * @return void
+     */
     public static function join($thisModelKey, $joinedModelName, $joinedModelKey, $addCondition="")
     {
         $className = get_called_class();
@@ -122,11 +229,27 @@ abstract class ActiveRecord
         ];
     }
 
+
+    /**
+     * Очищает статический массив $joinedModel
+     *
+     * @return void
+     */
     public static function clearJoins()
     {
         self::$joinedModel = [];
     }
 
+
+    /**
+     * Выбирает из таблицы БД запись по заданному id; создает соответствующий
+     * объект-модель; запускает рекурсивную функцию getJoin для прохождения
+     * цепочки присоединения моделей
+     *
+     * @param int $id id записи в таблице БД
+     *
+     * @return mixed <p>Объект-модель, соответствующий записи в БД</p>
+     */
     public static function getByID($id)
     {
         $fields = self::getFieldsSelect();
@@ -135,6 +258,18 @@ abstract class ActiveRecord
         return (self::getJoin($result))[0];
     }
 
+
+    /**
+     * Выбирает из таблицы БД записи по заданным условиям; создает массив
+     * соответствующих объектов-моделей; запускает рекурсивную функцию getJoin
+     * для прохождения цепочки присоединения моделей
+     *
+     * @param array $condition Ассоциативный массив параметров выборки в формате:
+     * [полеМодели => значение]
+     * @param string $addCondition Необязательная строка дополнительных условий выборки
+     *
+     * @return mixed <p>Массив объектов-моделей, соответствующих записям в БД</p>
+     */
     public static function getByCondition($condition, $addCondition="")
     {
         $fields = self::getFieldsSelect();
@@ -145,18 +280,41 @@ abstract class ActiveRecord
         return self::getJoin($result);
     }
 
+
+    /**
+     * По заданному id устанавливает записи в таблице БД флаг deleted=1
+     *
+     * @param int $id id записи в таблице БД
+     *
+     * @return void
+     */
     public static function deleteSoft($id)
     {
         self::$queryString = "UPDATE " . static::$tableName . " SET deleted=1 WHERE id=:id";
         self::execSQL(['id' => $id], 'update');
     }
 
+
+    /**
+     * По заданному id удаляет запись из таблицы БД
+     *
+     * @param int $id id записи в таблице БД
+     *
+     * @return void
+     */
     public static function delete($id)
     {
         self::$queryString = "DELETE FROM " . static::$tableName . " WHERE id=:id";
         self::execSQL(['id' => $id], 'delete');
     }
 
+
+    /**
+     * С помощью запроса update устанавливает значения полей записи в БД на
+     * основании значений полей объекта-модели
+     *
+     * @return void
+     */
     public function update()
     {
         $fields = self::getFieldsUpdate();
@@ -164,6 +322,13 @@ abstract class ActiveRecord
         self::execSQL(get_object_vars($this), 'update');
     }
 
+
+    /**
+     * Создает новую запись в таблице БД со значениями полей, равными значениям
+     * полей объекта-модели
+     *
+     * @return void
+     */
     public function insert()
     {
         list ($columns, $params) = self::getFieldsInsert();
@@ -171,6 +336,16 @@ abstract class ActiveRecord
         $this->id = self::execSQL(get_object_vars($this), 'insert');
     }
 
+
+    /**
+     * Выбирает из таблицы БД количество записей, соответствующих заданным условиям
+     *
+     * @param array $condition Ассоциативный массив параметров выборки в формате:
+     * [полеМодели => значение]
+     * @param string $addCondition Необязательная строка дополнительных условий выборки
+     *
+     * @return int <p>Количество записей</p>
+     */
     public static function count($condition, $addCondition="")
     {
         $conditionString = self::getDBCondition($condition);
