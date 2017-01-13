@@ -14,6 +14,7 @@ session_start();
 // Константы:
 define('ROOT', dirname(__FILE__));
 
+
 require_once 'vendor/autoload.php';
 
 $application1 = \App\Classes\Application::getInstance();
