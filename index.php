@@ -14,12 +14,7 @@ session_start();
 // Константы:
 define('ROOT', dirname(__FILE__));
 
-require_once 'App/Includes/autoload.php';
-
-// register the base directories for the namespace prefix
-$loader = new Psr4AutoloaderClass;
-$loader->register();
-$loader->addNamespace('App', './App');
+require_once 'vendor/autoload.php';
 
 $application1 = \App\Classes\Application::getInstance();
 $application1 -> run();
