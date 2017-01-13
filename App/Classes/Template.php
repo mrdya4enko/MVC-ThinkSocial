@@ -20,9 +20,7 @@ Class Template
     function show($directory)
     {
         // Load variables
-        foreach ($this->vars as $key => $value) {
-            $$key = $value;
-        }
+        extract($this->vars);
 
         // Show
         foreach ($this->parts as $part) {
