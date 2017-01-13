@@ -41,7 +41,6 @@ Class PageController Extends BaseController
         $userGroups = UserGroup::getByCondition(['userId' => $userId]);
 
         AlbumUser::join('albumId', 'App\Models\Album', 'id');
-
         Album::join('id', 'App\Models\AlbumPhoto', 'albumId', " AND status='active'");
         $userAlbums = AlbumUser::getByCondition(['userId' => $userId]);
         $commentPhotosNum = 0;
@@ -52,7 +51,7 @@ Class PageController Extends BaseController
         }
 
         UserNews::join('newsId', 'App\Models\News', 'id');
-        News::join('id', 'App\Models\NewsComment', 'newsId', ' LIMIT 3');
+        UserNews::join('newsId', 'App\Models\NewsComment', 'newsId', ' LIMIT 3');
         NewsComment::join('commentId', 'App\Models\Comment', 'id', " AND status='active'");
         Comment::join('userId', 'App\Models\User', 'id');
         $userNews = UserNews::getByCondition(['userId' => $userId]);
@@ -67,17 +66,9 @@ Class PageController Extends BaseController
 
         $unreadMessagesNum = Message::count(['receiverId' => $userId, 'status' => 'unread']);
 
-        $result = ["unreadMessagesNum" => $unreadMessagesNum,
-                   "commentPhotosNum" => $commentPhotosNum,
-                   "commentNewsNum" => $commentNewsNum,
-                   "commentAvatarNum" => $commentAvatarNum,
-                   "user" => $user,
-                   "userAvatar" => $user->userAvatar,
-                   "userCities" => $userCities,
-                   "userGroups" => $userGroups,
-                   "userAlbums" => $userAlbums,
-                   "userNews" => $userNews,
-                   "friendReqs" => $friendReqs];
+        $result = compact("unreadMessagesNum", "commentPhotosNum", "commentNewsNum", "commentAvatarNum",
+                   "user", "userCities", "userGroups", "userAlbums", "userNews", "friendReqs");
+        $result["userAvatar"] = $user->userAvatar;
         return $result;
     }
 }

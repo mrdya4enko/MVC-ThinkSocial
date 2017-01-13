@@ -1,11 +1,16 @@
 <?php
 namespace App\Models;
+
 use App\Config\Db;
+
 /**
- * Created by PhpStorm.
- * User: bond
- * Date: 12.12.16
- * Time: 13:29
+ * ActiveRecord Class
+ *
+ * Абстрактный класс, реализующий базовый функционал работы с записями в таблицах
+ * БД в соответствии с шаблоном Active Record
+ *
+ * @author А.Бричак <brichak.new@gmail.com>
+ * @version 1.0
  */
 
 abstract class ActiveRecord
@@ -41,7 +46,9 @@ abstract class ActiveRecord
 
     /**
      * Ассоциативный массив: ключ - название модели, к которой присоединяются
-     * другие модели; значение - ассоциативный массив с параметрами присоединения
+     * другие модели; значение - индексированный массив, каждый элемент которого
+     * - это ассоциативный массив с параметрами присоединения. Позволяет
+     * создавать цепочки или деревья зависимостей классов моделей
      *
      * @var array
      */
@@ -91,6 +98,7 @@ abstract class ActiveRecord
         }
         return implode(", ", $pieces);
     }
+
 
     /**
      * Формирует массив из двух строк со списком полей таблицы БД и списком
@@ -174,7 +182,7 @@ abstract class ActiveRecord
 
     /**
      * Запускает рекурсивный алгоритм поиска присоединенных (joined) моделей
-     * на основании цепочки присоединения моделей; выбирает из БД и создает
+     * на основании дерева присоединения моделей; выбирает из БД и создает
      * соответствующие массивы вложенных объектов. Вызывается из функций
      * getByID и getByCondition
      *
@@ -187,14 +195,14 @@ abstract class ActiveRecord
     private static function getJoin($rows)
     {
         $className = get_called_class();
-        if (isset(self::$joinedModel[$className])) {
-            $thisKey = self::$joinedModel[$className]["thisKey"];
-            $joinedName = self::$joinedModel[$className]["joinedName"];
+        if (! isset(self::$joinedModel[$className])) {
+            return $rows;
+        }
+        foreach (self::$joinedModel[$className] as $joinBranch) {
+            extract($joinBranch);
             $joinedNameShort = substr($joinedName, strrpos($joinedName, '\\') + 1);
-            $joinedKey = self::$joinedModel[$className]["joinedKey"];
-            $addCondition = self::$joinedModel[$className]["addCondition"];
             foreach ($rows as $row) {
-                if ($joinedKey=='id') {
+                if ($joinedKey == 'id') {
                     $value = $joinedName::getByID($row->{$thisKey});
                 } else {
                     $value = $joinedName::getByCondition([$joinedKey => $row->{$thisKey}], $addCondition);
@@ -209,24 +217,20 @@ abstract class ActiveRecord
     /**
      * Регистрирует присоединение (join) моделей в статическом массиве $joinedModel
      *
-     * @param string $thisModelKey Имя поля текущей таблицы, по которому
-     * проводится join
-     * @param string $joinedModelName Имя присоединяемой таблицы
-     * @param string $joinedModelKey Имя поля присоединяемой таблицы, по которому
+     * @param string $thisKey Имя поля текущей таблицы, по которому проводится join
+     * @param string $joinedName Имя присоединяемой таблицы
+     * @param string $joinedKey Имя поля присоединяемой таблицы, по которому
      * проводится join
      * @param string $addCondition Необязательная строка дополнительных условий
      * выборки при соединении таблиц
      *
      * @return void
      */
-    public static function join($thisModelKey, $joinedModelName, $joinedModelKey, $addCondition="")
+    public static function join($thisKey, $joinedName, $joinedKey, $addCondition="")
     {
         $className = get_called_class();
-        self::$joinedModel[$className] = ["thisKey" => $thisModelKey,
-            "joinedName" => $joinedModelName,
-            "joinedKey" => $joinedModelKey,
-            "addCondition" => $addCondition,
-        ];
+        self::$joinedModel[$className] = self::$joinedModel[$className] ?? [];
+        array_push(self::$joinedModel[$className], compact('thisKey', 'joinedName', 'joinedKey', 'addCondition'));
     }
 
 
@@ -244,7 +248,7 @@ abstract class ActiveRecord
     /**
      * Выбирает из таблицы БД запись по заданному id; создает соответствующий
      * объект-модель; запускает рекурсивную функцию getJoin для прохождения
-     * цепочки присоединения моделей
+     * дерева присоединения моделей
      *
      * @param int $id id записи в таблице БД
      *
@@ -262,7 +266,7 @@ abstract class ActiveRecord
     /**
      * Выбирает из таблицы БД записи по заданным условиям; создает массив
      * соответствующих объектов-моделей; запускает рекурсивную функцию getJoin
-     * для прохождения цепочки присоединения моделей
+     * для прохождения дерева присоединения моделей
      *
      * @param array $condition Ассоциативный массив параметров выборки в формате:
      * [полеМодели => значение]
