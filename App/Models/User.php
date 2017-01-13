@@ -31,16 +31,16 @@ class User extends ActiveRecord
         public static function register($name, $email, $password)
     {
         $user = new User();
-        $user->first_name = $name;
-        $user->middle_name = "";
-        $user->last_name = "";
+        $user->firstName = $name;
+        $user->middleName = "";
+        $user->lastName = "";
         $user->birthday = "1900-01-01";
         $user->sex = "male";
         $user->email = $email;
         $user->insert();
 
         $userPassword = new Password();
-        $userPassword->user_id = $user->id;
+        $userPassword->userId = $user->id;
         $userPassword->password = $password;
         $userPassword->insert();
     }
@@ -60,25 +60,6 @@ class User extends ActiveRecord
         $userPassword = Password::getByCondition(["userId" => $user[0]->id, "password" => $password]);
         return $userPassword? $user[0]->id : false;
 
-/*        $db = Db::getConnection();
-
-        $sql = 'SELECT u.id, first_name, middle_name, last_name, email, birthday, sex, status 
-                 FROM users u
-                     INNER JOIN passwords p
-                        ON u.id = p.user_id
-                           WHERE u.email = :email AND p.password = :password';
-
-        $result = $db->prepare($sql);
-        $result->bindParam(':email', $email, \PDO::PARAM_INT);
-        $result->bindParam(':password', $password, \PDO::PARAM_INT);
-        $result->execute();
-
-        $user = $result->fetch();
-
-        if ($user) {
-            return $user['id'];
-        }
-        return false;*/
     }
 
         /**
