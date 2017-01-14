@@ -10,7 +10,7 @@ namespace App\Classes;
 class Application
 {
     private $config;
-    private $router;
+    public $router;
     private $templateInfo;
     private $template;
     private $controller;

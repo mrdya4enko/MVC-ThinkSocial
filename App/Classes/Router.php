@@ -6,6 +6,7 @@ namespace App\Classes;
  */
 class Router {
 
+	public $uri;
 	/**
 	 * Property to hold an array of routes
 	 * @var array
@@ -45,15 +46,14 @@ class Router {
 	 */
 	public function run() {
 
-		$uri = $this -> getURI();
-
+		$this->uri = $this -> getURI();
 		// Check the availability of this request in the array of routes (routesOld.php)
 		foreach ($this->routes as $uriPattern => $path) {
 
 			// Compare $uriPattern and $uri
-			if (preg_match("~$uriPattern~", $uri)) {
+			if (preg_match("~$uriPattern~", $this->uri)) {
 
-                $internalRoute = preg_replace("~$uriPattern~", $path, $uri);
+                $internalRoute = preg_replace("~$uriPattern~", $path, $this->uri);
 
 
                 $segments = explode('/', $internalRoute);

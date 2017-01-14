@@ -81,8 +81,12 @@ class User extends ActiveRecord
         if (isset($_SESSION['user'])) {
             return $_SESSION['user'];
         }
+        if ('user/login' != \App\Classes\Application::getInstance()->router->uri) {
+            header("Location: /user/login");
+            die;
+        }
 
-        header("Location: /user/login");
+
     }
 
         /**
