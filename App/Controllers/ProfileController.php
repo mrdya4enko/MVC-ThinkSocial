@@ -64,18 +64,18 @@ Class ProfileController Extends PageController
                     $user->{$field} = $value;
                 }
                 $user->update();
-                header('Location: http://ts.local/profile/show/');
+                header('Location: /profile/show/');
                 break;
             case "actionInsert":
                 $newPhone = new Phone();
                 $newPhone->userId = $userId;
                 $newPhone->phone = $_POST['newPhone'];
                 $newPhone->insert();
-                header('Location: http://ts.local/profile/show/');
+                header('Location: /profile/show/');
                 break;
             case "actionDelete":
                 Phone::delete($_POST['phoneID']);
-                header('Location: http://ts.local/profile/show/');
+                header('Location: /profile/show/');
                 break;
         }
     }

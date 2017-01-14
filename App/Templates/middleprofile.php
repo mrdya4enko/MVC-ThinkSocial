@@ -20,7 +20,7 @@
         <div class="w3-col m12">
             <div class="w3-card-2 w3-round w3-white">
                 <div class="w3-container w3-padding">
-                    <form name="userprofile" action="http://ts.local/profile/<?=$submitAction?>/" method="post">
+                    <form name="userprofile" action="/profile/<?=$submitAction?>/" method="post">
                         <h4 class="w3-center">My Profile</h4>
                         <p><label for="userEmail">e-mail</label><input type="email" name="email" id="userEmail" value="<?=$user->email?>" disabled></p>
                         <p><label for="userFirstName">Имя</label><input type="text" name="firstName" id="userFirstName" value="<?=$user->firstName?>" <?=$allowEdit?>></p>
@@ -41,12 +41,12 @@
         <div class="w3-col m12">
             <div class="w3-card-2 w3-round w3-white">
                 <div class="w3-container w3-padding">
-                    <form name="userphones" action="http://ts.local/profile/<?=$submitPhoneAction?>/" method="post">
+                    <form name="userphones" action="/profile/<?=$submitPhoneAction?>/" method="post">
                         <h4 class="w3-center">My Phones</h4>
                         <?php foreach ($userPhones as $userPhone): ?>
                             <p><label for="userPhone">Телефон</label><input type="text" name="phone" id="userPhone" value="<?=$userPhone->phone?>" disabled>
                                 <input type="hidden" name="phoneID" value="<?=$userPhone->id?>">
-                                <button type="submit" formaction="http://ts.local/profile/delete/">Удалить</button>
+                                <button type="submit" formaction="/profile/delete/">Удалить</button>
                         <?php endforeach; ?>
                         <p><label for="userLastName" class="<?=$submitPhoneAction?>">Введите номер</label><input type="text" name="newPhone" class="<?=$submitPhoneAction?>"></p>
                         <input type="submit" class="submit submitPhone" value="<?=$submitPhoneValue?>">
