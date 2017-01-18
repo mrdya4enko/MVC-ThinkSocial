@@ -146,7 +146,7 @@ abstract class ActiveRecord
                 array_push($pieces, static::$tableName.".$fieldDB=:$fieldObject");
             }
         }
-        return implode(' AND ', $pieces);
+        return empty($pieces)? '':' WHERE ' . implode(' AND ', $pieces);
     }
 
 
@@ -229,7 +229,7 @@ abstract class ActiveRecord
      *
      * @return void
      */
-    private static function correctQueryJoinDB(&$fields, &$joinString, &$joinedTableCond)
+    private static function correctQueryJoinDB(&$fields, &$joinString)
     {
         $className = get_called_class();
         if (! isset(self::$joinedModelDB[$className])) {
@@ -240,8 +240,7 @@ abstract class ActiveRecord
             foreach ($joinedFields as $fieldTable => $fieldModel) {
                 $fields .= ", $joinedName.$fieldTable AS $fieldModel";
             }
-            $joinString .= " LEFT JOIN $joinedName ON $joinedName.$joinedKey=$thisKey";
-            $joinedTableCond .= $joinedCondition;
+            $joinString .= " LEFT JOIN $joinedName ON $joinedName.$joinedKey=$thisKey $joinedCondition";
         }
         return;
     }
@@ -326,9 +325,8 @@ abstract class ActiveRecord
     {
         $fields = self::getFieldsSelect();
         $joinString = '';
-        $joinedTableCond = '';
-        self::correctQueryJoinDB($fields, $joinString, $joinedTableCond);
-        self::$queryString = "SELECT $fields FROM " . static::$tableName . "$joinString $joinedTableCond WHERE " . static::$tableName . ".id=:id";
+        self::correctQueryJoinDB($fields, $joinString);
+        self::$queryString = "SELECT $fields FROM " . static::$tableName . " $joinString WHERE " . static::$tableName . ".id=:id";
         $result = self::execSQL(['id' => $id], 'select');
         return (self::getJoin($result))[0];
     }
@@ -348,8 +346,10 @@ abstract class ActiveRecord
     public static function getByCondition($condition, $addCondition='')
     {
         $fields = self::getFieldsSelect();
-        $conditionString = (! empty($condition))? ' WHERE ' . self::getDBCondition($condition) : '';
-        self::$queryString = "SELECT $fields FROM " . static::$tableName . "$conditionString $addCondition";
+        $conditionString = (! empty($condition))? self::getDBCondition($condition) : '';
+        $joinString = '';
+        self::correctQueryJoinDB($fields, $joinString);
+        self::$queryString = "SELECT $fields FROM " . static::$tableName . " $joinString $conditionString $addCondition";
         $result = self::execSQL($condition, 'select');
         return self::getJoin($result);
     }
@@ -438,7 +438,7 @@ abstract class ActiveRecord
      */
     public static function count($condition, $addCondition='')
     {
-        $conditionString = (! empty($condition))? ' WHERE ' . self::getDBCondition($condition) : '';
+        $conditionString = (! empty($condition))? self::getDBCondition($condition) : '';
         self::$queryString = 'SELECT COUNT(*) AS count FROM ' . static::$tableName . "$conditionString $addCondition";
         return (self::execSQL($condition, 'select'))[0]->count;
     }

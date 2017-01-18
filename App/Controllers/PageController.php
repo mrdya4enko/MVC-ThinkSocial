@@ -46,6 +46,11 @@ class PageController
             $user->avatarFileName = 'default.jpeg';
         }
 
+//        City::joinDB('cities.id', 'users_cities', 'city_id', [], ' AND users_cities.user_id=:userId');
+//        City::joinDB('cities.country_id', 'countries', 'id', ['id' => 'countryId', 'name' => 'countryName']);
+//        $userCities = City::getByCondition(['userId' => $this->userId], ' ORDER BY created_at');
+//        print_r($userCities);exit;
+
         UserCity::join('cityId', 'App\Models\City', 'id');
         City::join('countryId', 'App\Models\Country', 'id');
         $userCities = UserCity::getByCondition(['userId' => $this->userId], ' ORDER BY created_at');
