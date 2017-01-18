@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/files/w3.css">
     <link rel="stylesheet" href="/files/w3-theme-blue-grey.css">
     <link rel="stylesheet" href="/files/css.css">
+    <link rel="stylesheet" href="/files/main.css">
     <link rel="stylesheet" href="/files/font-awesome.css">
     <link href="/favicon.ico" rel="icon" type="image/x-icon" />
     <style>

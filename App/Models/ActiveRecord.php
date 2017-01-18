@@ -136,7 +136,8 @@ abstract class ActiveRecord
         $pieces = [];
         foreach (static::$tableFields as $fieldDB => $fieldObject) {
             if (isset($condition[$fieldObject])) {
-                array_push($pieces, "$fieldDB=:$fieldObject");
+                list($value, $sign) = array_pad(explode('/', $condition[$fieldObject], 2), 2, '=');
+                array_push($pieces, "$fieldDB $sign:$fieldObject");
             }
         }
         return implode(" AND ", $pieces);
