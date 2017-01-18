@@ -1,5 +1,8 @@
 <?php
 namespace App\Models;
+
+use App\Components\ActiveRecord;
+
 /**
  * Created by PhpStorm.
  * User: bond
@@ -10,10 +13,11 @@ namespace App\Models;
 class AlbumPhoto extends ActiveRecord
 {
     protected static $tableName = 'albums_photos';
-    protected static $tableFields = ["id" => "id",
-        "album_id" => "albumId",
-        "file_name" => "fileName",
-        "description" => "description",
-        "status" => "status",
-    ];
+    protected static $tableFields = [
+                                     'id' => 'id',
+                                     'album_id' => 'albumId',
+                                     'file_name' => 'fileName',
+                                     'description' => 'description',
+                                     'status' => 'status',
+                                    ];
 }

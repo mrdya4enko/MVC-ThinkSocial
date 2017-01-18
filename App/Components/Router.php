@@ -1,5 +1,5 @@
 <?php
-namespace App\Classes;
+namespace App\Components;
 /**
  * Class Router
  * Component to operate the routes
@@ -69,9 +69,9 @@ class Router {
                 $controllerName = $this->controlNameSpace.$controllerName;
                 $controllerObject = new $controllerName;
 
-                return ["ref" => $controllerObject,
-                        "actionName" => $actionName,
-                        "args" => $parameters];
+                return ['ref' => $controllerObject,
+                        'actionName' => $actionName,
+                        'args' => $parameters];
 
 			}
 		}

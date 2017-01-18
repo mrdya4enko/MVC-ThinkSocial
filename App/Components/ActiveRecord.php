@@ -1,7 +1,5 @@
 <?php
-namespace App\Models;
-
-use App\Config\Db;
+namespace App\Components;
 
 /**
  * ActiveRecord Class
@@ -54,6 +52,15 @@ abstract class ActiveRecord
      */
     protected static $joinedModel = [];
 
+    /**
+     * Ассоциативный массив для JOIN-ов чеерез SQL-запросы: ключ - название модели,
+     * к которой присоединяются другие модели; значение - индексированный массив,
+     * каждый элемент которого - это ассоциативный массив с параметрами присоединения.
+     *
+     * @var array
+     */
+    protected static $joinedModelDB = [];
+
 
     /**
      * Подключается к БД, используя класс Db
@@ -77,7 +84,7 @@ abstract class ActiveRecord
         foreach (static::$tableFields as $fieldDB => $fieldObject) {
             array_push($pieces, static::$tableName.".$fieldDB AS $fieldObject");
         }
-        return implode(", ", $pieces);
+        return implode(', ', $pieces);
     }
 
 
@@ -92,11 +99,11 @@ abstract class ActiveRecord
         $pieces = [];
         $fields = get_object_vars($this);
         foreach (static::$tableFields as $fieldDB => $fieldObject) {
-            if (isset($fields[$fieldObject]) && $fieldDB != "id") {
+            if (isset($fields[$fieldObject]) && $fieldDB != 'id') {
                 array_push($pieces, "$fieldDB=:$fieldObject");
             }
         }
-        return implode(", ", $pieces);
+        return implode(', ', $pieces);
     }
 
 
@@ -112,12 +119,12 @@ abstract class ActiveRecord
         $piecesParams = [];
         $fields = get_object_vars($this);
         foreach (static::$tableFields as $fieldDB => $fieldObject) {
-            if (isset($fields[$fieldObject]) && $fieldDB != "id") {
+            if (isset($fields[$fieldObject]) && $fieldDB != 'id') {
                 array_push($piecesColumns, $fieldDB);
                 array_push($piecesParams, ":$fieldObject");
             }
         }
-        return [implode(", ", $piecesColumns), implode(", ", $piecesParams)];
+        return [implode(', ', $piecesColumns), implode(', ', $piecesParams)];
     }
 
 
@@ -136,10 +143,10 @@ abstract class ActiveRecord
         $pieces = [];
         foreach (static::$tableFields as $fieldDB => $fieldObject) {
             if (isset($condition[$fieldObject])) {
-                array_push($pieces, "$fieldDB=:$fieldObject");
+                array_push($pieces, static::$tableName.".$fieldDB=:$fieldObject");
             }
         }
-        return implode(" AND ", $pieces);
+        return implode(' AND ', $pieces);
     }
 
 
@@ -215,18 +222,44 @@ abstract class ActiveRecord
 
 
     /**
-     * Регистрирует присоединение (join) моделей в статическом массиве $joinedModel
+     * Корректирует части SQL-запроса, добавляя необходимые данные для JOIN-а
+     * таблиц
      *
-     * @param string $thisKey Имя поля текущей таблицы, по которому проводится join
-     * @param string $joinedName Имя присоединяемой таблицы
-     * @param string $joinedKey Имя поля присоединяемой таблицы, по которому
-     * проводится join
-     * @param string $addCondition Необязательная строка дополнительных условий
-     * выборки при соединении таблиц
+     * @param
      *
      * @return void
      */
-    public static function join($thisKey, $joinedName, $joinedKey, $addCondition="")
+    private static function correctQueryJoinDB(&$fields, &$joinString, &$joinedTableCond)
+    {
+        $className = get_called_class();
+        if (! isset(self::$joinedModelDB[$className])) {
+            return;
+        }
+        foreach (self::$joinedModelDB[$className] as $joinBranch) {
+            extract($joinBranch);
+            foreach ($joinedFields as $fieldTable => $fieldModel) {
+                $fields .= ", $joinedName.$fieldTable AS $fieldModel";
+            }
+            $joinString .= " LEFT JOIN $joinedName ON $joinedName.$joinedKey=$thisKey";
+            $joinedTableCond .= $joinedCondition;
+        }
+        return;
+    }
+
+
+    /**
+     * Регистрирует присоединение (join) моделей в статическом массиве $joinedModel
+     *
+     * @param string $thisKey Имя поля текущей модели, по которому проводится join
+     * @param string $joinedName Имя присоединяемой модели
+     * @param string $joinedKey Имя поля присоединяемой модели, по которому
+     * проводится join
+     * @param string $addCondition Необязательная строка дополнительных условий
+     * выборки при соединении модели
+     *
+     * @return void
+     */
+    public static function join($thisKey, $joinedName, $joinedKey, $addCondition='')
     {
         $className = get_called_class();
         self::$joinedModel[$className] = self::$joinedModel[$className] ?? [];
@@ -246,6 +279,41 @@ abstract class ActiveRecord
 
 
     /**
+     * Регистрирует присоединение (join) таблиц через SQL-запросы в статическом
+     * массиве $joinedModelDB
+     *
+     * @param string $thisKey Имя поля текущей таблицы, по которому проводится join
+     * @param string $joinedName Имя присоединяемой таблицы
+     * @param string $joinedKey Имя поля присоединяемой таблицы, по которому
+     * проводится join
+     * @param array $joinedFields Ассоциативный массив: перечень полей
+     * присоединяемой таблицы, которые нужно получить в SQL-запросе, и названия
+     * соответствующих полей объекта
+     * @param string $joinedCondition Дополнительное условие для выборки в
+     * присоединяемой таблице
+     *
+     * @return void
+     */
+    public static function joinDB($thisKey, $joinedName, $joinedKey, $joinedFields=[], $joinedCondition='')
+    {
+        $className = get_called_class();
+        self::$joinedModelDB[$className] = self::$joinedModelDB[$className] ?? [];
+        array_push(self::$joinedModelDB[$className], compact('thisKey', 'joinedName', 'joinedKey', 'joinedFields', 'joinedCondition'));
+    }
+
+
+    /**
+     * Очищает статический массив $joinedModelDB
+     *
+     * @return void
+     */
+    public static function clearJoinsDB()
+    {
+        self::$joinedModelDB = [];
+    }
+
+
+    /**
      * Выбирает из таблицы БД запись по заданному id; создает соответствующий
      * объект-модель; запускает рекурсивную функцию getJoin для прохождения
      * дерева присоединения моделей
@@ -257,7 +325,10 @@ abstract class ActiveRecord
     public static function getByID($id)
     {
         $fields = self::getFieldsSelect();
-        self::$queryString = "SELECT $fields FROM " . static::$tableName . " WHERE id=:id";
+        $joinString = '';
+        $joinedTableCond = '';
+        self::correctQueryJoinDB($fields, $joinString, $joinedTableCond);
+        self::$queryString = "SELECT $fields FROM " . static::$tableName . "$joinString $joinedTableCond WHERE " . static::$tableName . ".id=:id";
         $result = self::execSQL(['id' => $id], 'select');
         return (self::getJoin($result))[0];
     }
@@ -274,10 +345,10 @@ abstract class ActiveRecord
      *
      * @return mixed <p>Массив объектов-моделей, соответствующих записям в БД</p>
      */
-    public static function getByCondition($condition, $addCondition="")
+    public static function getByCondition($condition, $addCondition='')
     {
         $fields = self::getFieldsSelect();
-        $conditionString = (! empty($condition))? " WHERE " . self::getDBCondition($condition) : "";
+        $conditionString = (! empty($condition))? ' WHERE ' . self::getDBCondition($condition) : '';
         self::$queryString = "SELECT $fields FROM " . static::$tableName . "$conditionString $addCondition";
         $result = self::execSQL($condition, 'select');
         return self::getJoin($result);
@@ -294,7 +365,7 @@ abstract class ActiveRecord
      *
      * @return mixed <p>Массив объектов-моделей, соответствующих записям в БД</p>
      */
-    public static function getAll($addCondition="")
+    public static function getAll($addCondition='')
     {
         return self::getByCondition([], $addCondition);
     }
@@ -309,7 +380,7 @@ abstract class ActiveRecord
      */
     public static function deleteSoft($id)
     {
-        self::$queryString = "UPDATE " . static::$tableName . " SET deleted=1 WHERE id=:id";
+        self::$queryString = 'UPDATE ' . static::$tableName . ' SET deleted=1 WHERE id=:id';
         self::execSQL(['id' => $id], 'update');
     }
 
@@ -323,7 +394,7 @@ abstract class ActiveRecord
      */
     public static function delete($id)
     {
-        self::$queryString = "DELETE FROM " . static::$tableName . " WHERE id=:id";
+        self::$queryString = 'DELETE FROM ' . static::$tableName . ' WHERE id=:id';
         self::execSQL(['id' => $id], 'delete');
     }
 
@@ -337,7 +408,7 @@ abstract class ActiveRecord
     public function update()
     {
         $fields = self::getFieldsUpdate();
-        self::$queryString = "UPDATE " . static::$tableName . " SET $fields  WHERE id=:id";
+        self::$queryString = 'UPDATE ' . static::$tableName . " SET $fields  WHERE id=:id";
         self::execSQL(get_object_vars($this), 'update');
     }
 
@@ -351,7 +422,7 @@ abstract class ActiveRecord
     public function insert()
     {
         list ($columns, $params) = self::getFieldsInsert();
-        self::$queryString = "INSERT INTO " . static::$tableName . " ($columns) VALUES ($params)";
+        self::$queryString = 'INSERT INTO ' . static::$tableName . " ($columns) VALUES ($params)";
         $this->id = self::execSQL(get_object_vars($this), 'insert');
     }
 
@@ -365,10 +436,10 @@ abstract class ActiveRecord
      *
      * @return int <p>Количество записей</p>
      */
-    public static function count($condition, $addCondition="")
+    public static function count($condition, $addCondition='')
     {
-        $conditionString = (! empty($condition))? " WHERE " . self::getDBCondition($condition) : "";
-        self::$queryString = "SELECT COUNT(*) AS count FROM " . static::$tableName . "$conditionString $addCondition";
+        $conditionString = (! empty($condition))? ' WHERE ' . self::getDBCondition($condition) : '';
+        self::$queryString = 'SELECT COUNT(*) AS count FROM ' . static::$tableName . "$conditionString $addCondition";
         return (self::execSQL($condition, 'select'))[0]->count;
     }
 }

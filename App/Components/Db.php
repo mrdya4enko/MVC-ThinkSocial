@@ -1,5 +1,5 @@
 <?php
-namespace App\Config;
+namespace App\Components;
 /**
  * Class Db
  * Component for working with database
@@ -28,7 +28,7 @@ class Db
         self::$db = new \PDO($dsn, $params['user'], $params['password']);
 
         // Specify the encoding
-        self::$db->exec("set names utf8");
+        self::$db->exec('set names utf8');
 		}
 		
 		return self::$db;

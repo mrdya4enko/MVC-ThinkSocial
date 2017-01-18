@@ -1,5 +1,8 @@
 <?php
 namespace App\Models;
+
+use App\Components\ActiveRecord;
+
 /**
  * Created by PhpStorm.
  * User: bond
@@ -10,9 +13,10 @@ namespace App\Models;
 class Group extends ActiveRecord
 {
     protected static $tableName = 'groups';
-    protected static $tableFields = ["id" => "id",
-        "name" => "name",
-        "description" => "description",
-        "status" => "status",
-    ];
+    protected static $tableFields = [
+                                     'id' => 'id',
+                                     'name' => 'name',
+                                     'description' => 'description',
+                                     'status' => 'status',
+                                    ];
 }

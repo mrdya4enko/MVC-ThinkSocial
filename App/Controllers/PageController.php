@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
 use App\Models\{User, UserAvatarComment, UserCity,UserGroup, Friend,
-    Message, City, AlbumUser, Album, UserNews, AlbumPhotoComment, News, NewsComment, Comment};
+    Message, City, AlbumUser, Album, UserNews, AlbumPhotoComment, NewsComment, Comment};
 
 
 /**
@@ -11,7 +11,7 @@ use App\Models\{User, UserAvatarComment, UserCity,UserGroup, Friend,
  * Time: 13:31
  */
 
-Class PageController
+class PageController
 {
     protected $userId;
 
@@ -36,12 +36,14 @@ Class PageController
 
         $this->userId = User::checkLogged();
 
-        User::join('id', 'App\Models\UserAvatar', 'userId', " AND status='active'");
+        User::joinDB('users.id', 'users_avatars', 'user_id', ['id' => 'userAvatarId', 'file_name' => 'avatarFileName'],
+            " AND users_avatars.status='active'");
         $user = User::getByID($this->userId);
-        if (isset ($user->userAvatar->id)) {
-            $commentAvatarNum = UserAvatarComment::count(['userAvatarId' => $user->userAvatar->id]);
+        if (isset ($user->userAvatarId)) {
+            $commentAvatarNum = UserAvatarComment::count(['userAvatarId' => $user->userAvatarId]);
         } else {
             $commentAvatarNum = 0;
+            $user->avatarFileName = 'default.jpeg';
         }
 
         UserCity::join('cityId', 'App\Models\City', 'id');
@@ -80,7 +82,6 @@ Class PageController
         $result = compact('templateNames', 'title', 'unreadMessagesNum', 'commentPhotosNum',
             'commentNewsNum', 'commentAvatarNum', 'user', 'userCities', 'userGroups',
             'userAlbums', 'userNews', 'friendReqs');
-        $result['userAvatar'] = $user->userAvatar;
         return $result;
     }
 }

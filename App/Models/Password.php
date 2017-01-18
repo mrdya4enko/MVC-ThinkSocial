@@ -1,5 +1,8 @@
 <?php
 namespace App\Models;
+
+use App\Components\ActiveRecord;
+
 /**
  * Created by PhpStorm.
  * User: bond
@@ -10,8 +13,9 @@ namespace App\Models;
 class Password extends ActiveRecord
 {
     protected static $tableName = 'passwords';
-    protected static $tableFields = ["id" => "id",
-        "user_id" => "userId",
-        "password" => "password",
-    ];
+    protected static $tableFields = [
+                                     'id' => 'id',
+                                     'user_id' => 'userId',
+                                     'password' => 'password',
+                                    ];
 }

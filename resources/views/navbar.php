@@ -4,9 +4,9 @@
         <li class="w3-hide-medium w3-hide-large w3-opennav w3-right">
             <a class="w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
         </li>
-        <li><a href="http://ts.local/" class="w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right">Main</i></a></li>
+        <li><a href="/" class="w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right">Main</i></a></li>
         <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="News"><i class="fa fa-globe">News</i></a></li>
-        <li class="w3-hide-small"><a href="http://ts.local/profile/show/" class="w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user">Profile</i></a></li>
+        <li class="w3-hide-small"><a href="/profile/show/" class="w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user">Profile</i></a></li>
         <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="Messages"><i class="fa fa-envelope">Messages</i><span class="w3-badge w3-right w3-small w3-green"><?=$unreadMessagesNum?></span></a></li>
         <li class="w3-hide-small w3-dropdown-hover">
             <a href="#" class="w3-padding-large w3-hover-white" title="Notifications"><i class="fa fa-bell">Notifications</i><span class="w3-badge w3-right w3-small w3-green"><?=count($friendReqs)+$commentNewsNum+$commentPhotosNum+$commentAvatarNum?></span></a>
@@ -17,7 +17,7 @@
                 <a href="#"><?=$commentAvatarNum?> new comments to your avatar</a>
             </div>
         </li>
-        <li class="w3-hide-small w3-right"><a href="http://ts.local/user/logout/" class="w3-padding-large w3-hover-white" title="Logout"><img src="/../avatars/<?=$userAvatar->fileName?>" class="w3-circle" style="height:25px;width:25px" alt="Avatar"></a></li>
+        <li class="w3-hide-small w3-right"><a href="/user/logout/" class="w3-padding-large w3-hover-white" title="Logout"><img src="/public/avatars/<?=$user->avatarFileName?>" class="w3-circle" style="height:25px;width:25px" alt="Avatar"></a></li>
     </ul>
 </div>
 

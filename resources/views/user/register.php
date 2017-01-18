@@ -1,5 +1,5 @@
 <?php
-include ROOT . '/App/Templates/layouts/auth/header.php';
+include ROOT . '/resources/views/layouts/auth/header.php';
 ?>
 <div class="container">
 	<div class="row">
@@ -63,5 +63,5 @@ include ROOT . '/App/Templates/layouts/auth/header.php';
 	</div>
 </div>
 <?php
-include ROOT . '/App/Templates/layouts/auth/footer.php';
+include ROOT . '/resources/views/layouts/auth/footer.php';
 ?>

@@ -20,18 +20,18 @@
 
             <?php foreach ($userNews as $oneUserNews): ?>
                 <div class="w3-container w3-card-2 w3-white w3-round w3-margin"><br>
-                    <img src="/../avatars/<?=$userAvatar->fileName?>" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+                    <img src="/public/avatars/<?=$user->avatarFileName?>" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
                     <span class="w3-right w3-opacity"><?=$oneUserNews->news->published?></span>
                     <h4><?=$user->firstName?> <?=$user->lastName?></h4><br>
                     <hr class="w3-clear">
                     <p><h3><?=$oneUserNews->news->title?></h3></p>
-                    <img src="/../pictures/<?=$oneUserNews->news->picture?>" style="width:100%" class="w3-margin-bottom">
+                    <img src="/public/pictures/<?=$oneUserNews->news->picture?>" style="width:100%" class="w3-margin-bottom">
                     <p><?=$oneUserNews->news->text?></p>
                     <!--          <button type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i> &nbsp;Like</button>  -->
                     <button type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i> &nbsp;Comment</button>
                     <p><h4>Комментарии пользователей:</h4></p>
                     <?php foreach ($oneUserNews->newsComment as $newsComment): ?>
-                        <p><img src="/../avatars/<?=$newsComment->comment->user->userAvatar->fileName?>" class="w3-circle" style="height:25px;width:25px" alt="Avatar">
+                        <p><img src="/public/avatars/<?=isset($newsComment->comment->user->avatarFileName)? $newsComment->comment->user->avatarFileName:'default.jpeg'?>" class="w3-circle" style="height:25px;width:25px" alt="Avatar">
                             <?=$newsComment->comment->published?> пользователь <strong><?=$newsComment->comment->user->firstName?>
                             <?=$newsComment->comment->user->lastName?></strong> написал(а):<br />
                         <em class="comment"><?=$newsComment->comment->text?></em></p>

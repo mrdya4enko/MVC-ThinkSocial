@@ -9,7 +9,7 @@ use App\Models\{User, Phone};
  * Time: 13:31
  */
 
-Class ProfileController Extends PageController
+class ProfileController extends PageController
 {
 
 
@@ -76,7 +76,7 @@ Class ProfileController Extends PageController
             $user->{$field} = $value;
         }
         $user->update();
-        header('Location: http://ts.local/profile/show/');
+        header('Location: /profile/show/');
     }
 
 
@@ -88,13 +88,13 @@ Class ProfileController Extends PageController
         $newPhone->userId = $this->userId;
         $newPhone->phone = $_POST['newPhone'];
         $newPhone->insert();
-        header('Location: http://ts.local/profile/show/');
+        header('Location: /profile/show/');
     }
 
 
     public function actionDelete()
     {
         Phone::delete($_POST['phoneID']);
-        header('Location: http://ts.local/profile/show/');
+        header('Location: /profile/show/');
     }
 }
