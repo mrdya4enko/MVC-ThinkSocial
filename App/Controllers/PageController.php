@@ -11,22 +11,33 @@ use App\Models\{User, UserAvatarComment, UserCity,UserGroup, Friend,
  * Time: 13:31
  */
 
-Class PageController Extends BaseController
+Class PageController
 {
-    protected function getTemplateNames()
+    protected $userId;
+
+
+    /**
+     * Подготавливает итоговый массив переменных - результат работы контроллера
+     *
+     * @return array <p>Ассоциативный массив - итоговый набор переменных,
+     * полученных в результате работы контроллера, включающий в себя массив
+     * наименований шаблонов и title выводимого документа HTML</p>
+     */
+    public function actionIndex()
     {
-        $this->templateInfo['templateNames'] = ['head', 'navbar', 'leftcolumn', 'rightcolumn', 'footer'];
-    }
-    protected function getTitle()
-    {
-        $this->templateInfo['title'] = 'ThinkSocial';
-    }
-    protected function getControllerVars()
-    {
-        $userId = User::checkLogged();
+        $templateNames = [
+                          'head',
+                          'navbar',
+                          'leftcolumn',
+                          'rightcolumn',
+                          'footer',
+                         ];
+        $title = 'ThinkSocial';
+
+        $this->userId = User::checkLogged();
 
         User::join('id', 'App\Models\UserAvatar', 'userId', " AND status='active'");
-        $user = User::getByID($userId);
+        $user = User::getByID($this->userId);
         if (isset ($user->userAvatar->id)) {
             $commentAvatarNum = UserAvatarComment::count(['userAvatarId' => $user->userAvatar->id]);
         } else {
@@ -35,14 +46,14 @@ Class PageController Extends BaseController
 
         UserCity::join('cityId', 'App\Models\City', 'id');
         City::join('countryId', 'App\Models\Country', 'id');
-        $userCities = UserCity::getByCondition(['userId' => $userId], " ORDER BY created_at");
+        $userCities = UserCity::getByCondition(['userId' => $this->userId], ' ORDER BY created_at');
 
         UserGroup::join('groupId', 'App\Models\Group', 'id');
-        $userGroups = UserGroup::getByCondition(['userId' => $userId]);
+        $userGroups = UserGroup::getByCondition(['userId' => $this->userId]);
 
         AlbumUser::join('albumId', 'App\Models\Album', 'id');
         Album::join('id', 'App\Models\AlbumPhoto', 'albumId', " AND status='active'");
-        $userAlbums = AlbumUser::getByCondition(['userId' => $userId]);
+        $userAlbums = AlbumUser::getByCondition(['userId' => $this->userId]);
         $commentPhotosNum = 0;
         foreach ($userAlbums as $userAlbum) {
             foreach ($userAlbum->album->albumPhoto as $albumPhoto) {
@@ -54,7 +65,7 @@ Class PageController Extends BaseController
         UserNews::join('newsId', 'App\Models\NewsComment', 'newsId', ' LIMIT 3');
         NewsComment::join('commentId', 'App\Models\Comment', 'id', " AND status='active'");
         Comment::join('userId', 'App\Models\User', 'id');
-        $userNews = UserNews::getByCondition(['userId' => $userId]);
+        $userNews = UserNews::getByCondition(['userId' => $this->userId]);
 
         $commentNewsNum = 0;
         foreach ($userNews as $oneUserNews) {
@@ -62,13 +73,14 @@ Class PageController Extends BaseController
         }
 
         Friend::join('userSender', 'App\Models\User', 'id');
-        $friendReqs = Friend::getByCondition(['userReceiver' => $userId, 'status' => 'unapplied'], " ORDER BY created_at DESC");
+        $friendReqs = Friend::getByCondition(['userReceiver' => $this->userId, 'status' => 'unapplied'], ' ORDER BY created_at DESC');
 
-        $unreadMessagesNum = Message::count(['receiverId' => $userId, 'status' => 'unread']);
+        $unreadMessagesNum = Message::count(['receiverId' => $this->userId, 'status' => 'unread']);
 
-        $result = compact("unreadMessagesNum", "commentPhotosNum", "commentNewsNum", "commentAvatarNum",
-                   "user", "userCities", "userGroups", "userAlbums", "userNews", "friendReqs");
-        $result["userAvatar"] = $user->userAvatar;
+        $result = compact('templateNames', 'title', 'unreadMessagesNum', 'commentPhotosNum',
+            'commentNewsNum', 'commentAvatarNum', 'user', 'userCities', 'userGroups',
+            'userAlbums', 'userNews', 'friendReqs');
+        $result['userAvatar'] = $user->userAvatar;
         return $result;
     }
 }

@@ -9,8 +9,19 @@ namespace App\Controllers;
 
 Class SiteController Extends PageController
 {
-    protected function getTemplateNames()
+
+
+    public function actionIndex()
     {
-        $this->templateInfo['templateNames'] = ['head', 'navbar', 'leftcolumn', 'middlecolumn', 'rightcolumn', 'footer'];
+        $result = parent::actionIndex();
+        $result['templateNames'] = [
+                                    'head',
+                                    'navbar',
+                                    'leftcolumn',
+                                    'middlecolumn',
+                                    'rightcolumn',
+                                    'footer',
+                                   ];
+        return $result;
     }
 }

@@ -277,11 +277,26 @@ abstract class ActiveRecord
     public static function getByCondition($condition, $addCondition="")
     {
         $fields = self::getFieldsSelect();
-        $conditionString = self::getDBCondition($condition);
-        self::$queryString = "SELECT $fields FROM " . static::$tableName . " WHERE $conditionString $addCondition";
-
+        $conditionString = (! empty($condition))? " WHERE " . self::getDBCondition($condition) : "";
+        self::$queryString = "SELECT $fields FROM " . static::$tableName . "$conditionString $addCondition";
         $result = self::execSQL($condition, 'select');
         return self::getJoin($result);
+    }
+
+
+    /**
+     * Выбирает из таблицы БД все записи; создает массив соответствующих объектов-
+     * моделей; запускает рекурсивную функцию getJoin для прохождения дерева
+     * присоединения моделей
+     *
+     * @param string $addCondition Необязательная строка c дополнительной
+     * инструкцией
+     *
+     * @return mixed <p>Массив объектов-моделей, соответствующих записям в БД</p>
+     */
+    public static function getAll($addCondition="")
+    {
+        return self::getByCondition([], $addCondition);
     }
 
 
@@ -352,8 +367,8 @@ abstract class ActiveRecord
      */
     public static function count($condition, $addCondition="")
     {
-        $conditionString = self::getDBCondition($condition);
-        self::$queryString = "SELECT COUNT(*) AS count FROM " . static::$tableName . " WHERE $conditionString $addCondition";
+        $conditionString = (! empty($condition))? " WHERE " . self::getDBCondition($condition) : "";
+        self::$queryString = "SELECT COUNT(*) AS count FROM " . static::$tableName . "$conditionString $addCondition";
         return (self::execSQL($condition, 'select'))[0]->count;
     }
 }
