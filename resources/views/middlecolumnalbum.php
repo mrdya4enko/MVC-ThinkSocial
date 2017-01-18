@@ -31,15 +31,19 @@
 
 
             <?php
-                foreach ($userAlbums as $oneUserAlbum) {
+            foreach ($userAlbums as $oneUserAlbum) {
+                if ($oneUserAlbum->album->id === $albumId) {
                     echo <<<HEREDOC
                         <div class="w3-container w3-card-2 w3-white w3-round w3-margin"><br>
-                            <a href="/album/{$oneUserAlbum->album->id}"><p><h3>{$oneUserAlbum->album->name}</h3></p></a>
-                            
-                            <img src="/public/photos/{$oneUserAlbum->album->albumPhoto[0]->fileName}" style="width:25%" class="w3-margin-bottom">
-                        </div>
+                            <p><h3>{$oneUserAlbum->album->name}</h3></p>
 HEREDOC;
+                    foreach ($oneUserAlbum->album->albumPhoto as $photo)
+                    echo <<<HEREDOC
+                            <img src="/public/photos/{$photo->fileName}" style="width:25%" class="w3-margin-bottom">
+HEREDOC;
+                    echo '</div>';
                 }
+            }
             ?>
 
 

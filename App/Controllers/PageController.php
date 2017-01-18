@@ -23,7 +23,7 @@ class PageController
      * полученных в результате работы контроллера, включающий в себя массив
      * наименований шаблонов и title выводимого документа HTML</p>
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
         $templateNames = [
                           'head',

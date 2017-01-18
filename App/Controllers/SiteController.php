@@ -11,9 +11,9 @@ class SiteController extends PageController
 {
 
 
-    public function actionIndex()
+    public function actionIndex($id='')
     {
-        $result = parent::actionIndex();
+        $result = parent::actionIndex($id);
         $result['templateNames'] = [
                                     'head',
                                     'navbar',

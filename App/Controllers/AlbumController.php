@@ -4,19 +4,20 @@ namespace App\Controllers;
 use App\Models\{User, UserAvatarComment, UserCity,UserGroup, Friend,
     Message, City, AlbumUser, Album, UserNews, AlbumPhotoComment, News, NewsComment, Comment};
 
-class AlbumsController extends PageController
+class AlbumController extends PageController
 {
-    public function actionIndex($id='')
+    public function actionIndex($id)
     {
         $result = parent::actionIndex($id);
         $result['templateNames'] = [
             'head',
             'navbar',
             'leftcolumn',
-            'middlecolumnalbums',
+            'middlecolumnalbum',
             'rightcolumn',
             'footer',
         ];
+        $result['albumId'] = $id;
         return $result;
     }
 }
