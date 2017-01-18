@@ -6,7 +6,12 @@
     <link rel="stylesheet" href="/public/css/w3.css">
     <link rel="stylesheet" href="/public/css/w3-theme-blue-grey.css">
     <link rel="stylesheet" href="/public/css/css.css">
+    <link rel="stylesheet" href="/public/css/style.css">
     <link rel="stylesheet" href="/public/css/font-awesome.css">
+
+    <script src="/public/js/jquery-3.1.1.min.js"></script>
+    <script src="/public/js/addAlbum.js"></script>
+
     <style>
         html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
     </style>

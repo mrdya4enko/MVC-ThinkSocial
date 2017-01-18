@@ -18,6 +18,7 @@ return [
     'profile/input' => 'profile/input',
     'profile/insert' => 'profile/insert',
     'profile/delete' => 'profile/delete',
+    'albums' => 'albums/index',
     // Main page
     'index.php' => 'site/index', // actionIndex in SiteController
     '' => 'site/index', // actionIndex in SiteController
