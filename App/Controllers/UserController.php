@@ -1,5 +1,6 @@
 <?php
 namespace App\Controllers;
+
 use App\Models\User;
 
 class UserController
@@ -66,12 +67,12 @@ class UserController
                 } else {
                     User::auth($userId);
                 }
-                header("Location: /");
+                header('Location: /');
             }
         }
 
-        return array('templateNames' => array("/user/register"),
-            'errors' => $errors);
+        return ['templateNames' => ['/user/register'],
+            'errors' => $errors];
 
     }
 
@@ -102,12 +103,12 @@ class UserController
             } else {
                 User::auth($userId);
 
-                header("Location: /");
+                header('Location: /');
             }
         }
 
-        return array('templateNames' => array("/user/login"),
-            'errors' => $errors);
+        return ['templateNames' => ['/user/login'],
+            'errors' => $errors];
     }
 
     /**
@@ -116,8 +117,8 @@ class UserController
     public function actionLogout()
     {
         session_start();
-        unset($_SESSION["user"]);
-        header("Location: /");
+        unset($_SESSION['user']);
+        header('Location: /');
     }
 
 }

@@ -1,5 +1,8 @@
 <?php
 namespace App\Models;
+
+use App\Components\ActiveRecord;
+
 /**
  * Created by PhpStorm.
  * User: bond
@@ -10,8 +13,9 @@ namespace App\Models;
 class UserCity extends ActiveRecord
 {
     protected static $tableName = 'users_cities';
-    protected static $tableFields = ["id" => "id",
-        "user_id" => "userId",
-        "city_id" => "cityId",
-    ];
+    protected static $tableFields = [
+                                     'id' => 'id',
+                                     'user_id' => 'userId',
+                                     'city_id' => 'cityId',
+                                    ];
 }

@@ -1,5 +1,8 @@
 <?php
 namespace App\Models;
+
+use App\Components\ActiveRecord;
+
 /**
  * Created by PhpStorm.
  * User: bond
@@ -10,13 +13,14 @@ namespace App\Models;
 class UserAvatar extends ActiveRecord
 {
     protected static $tableName = 'users_avatars';
-    protected static $tableFields = ["id" => "id",
-        "user_id" => "userId",
-        "file_name" => "fileName",
-        "status" => "status",
-    ];
+    protected static $tableFields = [
+                                     'id' => 'id',
+                                     'user_id' => 'userId',
+                                     'file_name' => 'fileName',
+                                     'status' => 'status',
+                                    ];
 
-    public static function getByCondition($condition, $addCondition="")
+    public static function getByCondition($condition, $addCondition='')
     {
         $result = parent::getByCondition($condition, $addCondition);
         if (count($result) == 0) {

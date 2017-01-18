@@ -1,6 +1,8 @@
 <?php
 namespace App\Models;
-use App\Config\Db;
+
+use App\Components\ActiveRecord;
+
 /**
  * Created by PhpStorm.
  * User: bond
@@ -11,15 +13,16 @@ use App\Config\Db;
 class User extends ActiveRecord
 {
     protected static $tableName = 'users';
-    protected static $tableFields = ["id" => "id",
-                                    "first_name" => "firstName",
-                                    "middle_name" => "middleName",
-                                    "last_name" => "lastName",
-                                    "email" => "email",
-                                    "birthday" => "birthday",
-                                    "sex" => "sex",
-                                    "status" => "status",
-    ];
+    protected static $tableFields = [
+                                     'id' => 'id',
+                                     'first_name' => 'firstName',
+                                     'middle_name' => 'middleName',
+                                     'last_name' => 'lastName',
+                                     'email' => 'email',
+                                     'birthday' => 'birthday',
+                                     'sex' => 'sex',
+                                     'status' => 'status',
+                                    ];
 
         /**
          * User Register
@@ -32,10 +35,10 @@ class User extends ActiveRecord
     {
         $user = new User();
         $user->firstName = $name;
-        $user->middleName = "";
-        $user->lastName = "";
-        $user->birthday = "1900-01-01";
-        $user->sex = "male";
+        $user->middleName = '';
+        $user->lastName = '';
+        $user->birthday = '1900-01-01';
+        $user->sex = 'male';
         $user->email = $email;
         $user->insert();
 
@@ -53,11 +56,11 @@ class User extends ActiveRecord
          */
         public static function checkUserData($email, $password)
     {
-        $user = User::getByCondition(["email" => $email]);
+        $user = User::getByCondition(['email' => $email]);
         if (! $user) {
             return false;
         }
-        $userPassword = Password::getByCondition(["userId" => $user[0]->id, "password" => $password]);
+        $userPassword = Password::getByCondition(['userId' => $user[0]->id, 'password' => $password]);
         return $userPassword? $user[0]->id : false;
 
     }
@@ -82,7 +85,8 @@ class User extends ActiveRecord
             return $_SESSION['user'];
         }
 
-        header("Location: /user/login");
+        header('Location: /user/login');
+        exit;
     }
 
         /**
@@ -157,7 +161,7 @@ class User extends ActiveRecord
          */
         public static function checkEmailExists($email)
     {
-        return User::count(["email" => $email]);
+        return User::count(['email' => $email]);
     }
 
         /**

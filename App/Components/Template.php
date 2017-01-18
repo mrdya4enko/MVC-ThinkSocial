@@ -1,5 +1,5 @@
 <?php
-namespace App\Classes;
+namespace App\Components;
 /**
  * Created by PhpStorm.
  * User: bond

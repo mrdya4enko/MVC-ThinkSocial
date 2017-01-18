@@ -1,5 +1,5 @@
 <?php
-namespace App\Classes;
+namespace App\Components;
 /**
  * Created by PhpStorm.
  * User: bond
@@ -32,7 +32,7 @@ class Application
     }
     private function setRouter()
     {
-        $this->router = new Router("App\\" . $this->config['controlNameSpace'] . "\\");
+        $this->router = new Router('App\\' . $this->config['controlNameSpace'] . '\\');
     }
     private function initialize ()
     {
@@ -59,7 +59,7 @@ class Application
     private function render ()
     {
         $this->setTemplate();
-        $this->template->show("App/" . $this->config['templatesPath']);
+        $this->template->show($this->config['templatesPath']);
     }
     private function finish ()
     {

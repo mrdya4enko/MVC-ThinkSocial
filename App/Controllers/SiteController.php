@@ -7,7 +7,7 @@ namespace App\Controllers;
  * Time: 13:31
  */
 
-Class SiteController Extends PageController
+class SiteController extends PageController
 {
 
 
