@@ -143,7 +143,8 @@ abstract class ActiveRecord
         $pieces = [];
         foreach (static::$tableFields as $fieldDB => $fieldObject) {
             if (isset($condition[$fieldObject])) {
-                array_push($pieces, static::$tableName.".$fieldDB=:$fieldObject");
+                list($value, $sign) = array_pad(explode('/', $condition[$fieldObject], 2), 2, '=');
+                array_push($pieces, static::$tableName.".$fieldDB $sign:$fieldObject");
             }
         }
         return empty($pieces)? '':' WHERE ' . implode(' AND ', $pieces);
