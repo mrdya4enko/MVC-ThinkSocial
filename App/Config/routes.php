@@ -18,6 +18,16 @@ return [
     'profile/input' => 'profile/input',
     'profile/insert' => 'profile/insert',
     'profile/delete' => 'profile/delete',
+    //Managing the user groups
+    'groups/find' => 'group/find',
+    'groups' => 'group/index',
+    'group/subsribe/([0-9]+)' => 'group/subsribe/$1',
+    'group/unsubsribe/([0-9]+)' => 'group/unsubsribe/$1',
+//
+//
+//
+    'group/edit/([0-9]+)' => 'group/edit/$1',
+    'group/([0-9]+)' => 'group/show/$1',
     // Main page
     'index.php' => 'site/index', // actionIndex in SiteController
     '' => 'site/index', // actionIndex in SiteController
