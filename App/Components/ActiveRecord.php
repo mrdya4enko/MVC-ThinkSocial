@@ -183,6 +183,7 @@ abstract class ActiveRecord
             }
             array_push($result, $object);
         }
+
         return $result;
     }
 
@@ -240,7 +241,8 @@ abstract class ActiveRecord
             foreach ($joinedFields as $fieldTable => $fieldModel) {
                 $fields .= ", $joinedName.$fieldTable AS $fieldModel";
             }
-            $joinString .= " LEFT JOIN $joinedName ON $joinedName.$joinedKey=$thisKey $joinedCondition";
+            $leftString = $isLeftJoin? ' LEFT ':'';
+            $joinString .= "$leftString JOIN $joinedName ON $joinedName.$joinedKey=$thisKey $joinedCondition";
         }
         return;
     }
@@ -293,11 +295,12 @@ abstract class ActiveRecord
      *
      * @return void
      */
-    public static function joinDB($thisKey, $joinedName, $joinedKey, $joinedFields=[], $joinedCondition='')
+    public static function joinDB($thisKey, $joinedName, $joinedKey, $joinedFields=[], $isLeftJoin=false, $joinedCondition='')
     {
         $className = get_called_class();
         self::$joinedModelDB[$className] = self::$joinedModelDB[$className] ?? [];
-        array_push(self::$joinedModelDB[$className], compact('thisKey', 'joinedName', 'joinedKey', 'joinedFields', 'joinedCondition'));
+        array_push(self::$joinedModelDB[$className], compact('thisKey', 'joinedName',
+            'joinedKey', 'joinedFields', 'isLeftJoin', 'joinedCondition'));
     }
 
 
@@ -439,7 +442,12 @@ abstract class ActiveRecord
     public static function count($condition, $addCondition='')
     {
         $conditionString = (! empty($condition))? self::getDBCondition($condition) : '';
-        self::$queryString = 'SELECT COUNT(*) AS count FROM ' . static::$tableName . "$conditionString $addCondition";
+        $fields = '';
+        $joinString = '';
+        self::correctQueryJoinDB($fields, $joinString);
+        self::$queryString = 'SELECT COUNT(*) AS count FROM ' . static::$tableName . " $joinString $conditionString $addCondition";
         return (self::execSQL($condition, 'select'))[0]->count;
     }
 }
+
+

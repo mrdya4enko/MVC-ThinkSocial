@@ -84,3 +84,11 @@ INSERT INTO `friends` (user_sender, user_receiver, status) VALUES (1,2,'applied'
 insert into friends (user_sender, user_receiver) values (6,5);
 
 insert into passwords (user_id, password) values (5, '111111');
+
+insert into users_cities (user_id, city_id) values (5, 1);
+
+insert into comments (user_id, text, status, published) values
+(4, 'Ненавижу!!!!!', 'block', '2017-01-19 12:33:16'),
+(6, 'Тебе что, дура, больше заняться нечем?', 'delete', '2017-01-19 12:33:16');
+
+insert into news_comments (news_id, comment_id) values (3, 6), (3, 7);

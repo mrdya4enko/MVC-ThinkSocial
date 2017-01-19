@@ -17,8 +17,8 @@
                     <div class="w3-container">
                         <p>Friend Request</p>
 
-                        <img src="/public/avatars/<?=isset($friendReqs[0]->user->avatarFileName)? $friendReqs[0]->user->avatarFileName:'default.jpeg'?>" alt="Avatar" style="width:50%"><br>
-                        <span><?=$friendReqs[0]->user->firstName?> <?=$friendReqs[0]->user->lastName?></span>
+                        <img src="/public/avatars/<?=isset($friendReqs[0]->avatarFileName)? $friendReqs[0]->avatarFileName:'default.jpeg'?>" alt="Avatar" style="width:50%"><br>
+                        <span><?=$friendReqs[0]->firstName?> <?=$friendReqs[0]->lastName?></span>
                         <div class="w3-row w3-opacity">
                             <div class="w3-half">
                                 <button class="w3-btn w3-green w3-btn-block w3-section" title="Accept"><i class="fa fa-check"></i></button>

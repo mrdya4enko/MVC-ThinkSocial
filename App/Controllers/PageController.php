@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
-use App\Models\{User, UserAvatarComment, UserCity,UserGroup, Friend,
-    Message, City, AlbumUser, Album, UserNews, AlbumPhotoComment, NewsComment, Comment};
+use App\Models\{User, UserAvatarComment, UserCity, Group, UserGroup, Friend,
+    Message, City, AlbumUser, Album, UserNews, News, AlbumPhotoComment, NewsComment, Comment};
 
 
 /**
@@ -37,7 +37,7 @@ class PageController
         $this->userId = User::checkLogged();
 
         User::joinDB('users.id', 'users_avatars', 'user_id', ['id' => 'userAvatarId', 'file_name' => 'avatarFileName'],
-            " AND users_avatars.status='active'");
+            true, " AND users_avatars.status='active'");
         $user = User::getByID($this->userId);
         if (isset ($user->userAvatarId)) {
             $commentAvatarNum = UserAvatarComment::count(['userAvatarId' => $user->userAvatarId]);
@@ -46,47 +46,56 @@ class PageController
             $user->avatarFileName = 'default.jpeg';
         }
 
-//        City::joinDB('cities.id', 'users_cities', 'city_id', [], ' AND users_cities.user_id=:userId');
-//        City::joinDB('cities.country_id', 'countries', 'id', ['id' => 'countryId', 'name' => 'countryName']);
-//        $userCities = City::getByCondition(['userId' => $this->userId], ' ORDER BY created_at');
-//        print_r($userCities);exit;
+        City::joinDB('cities.id', 'users_cities', 'city_id', [], false, ' AND users_cities.user_id=:userId');
+        City::joinDB('cities.country_id', 'countries', 'id', ['name' => 'countryName']);
+        $userCities = City::getByCondition(['userId' => $this->userId], ' ORDER BY users_cities.created_at');
 
-        UserCity::join('cityId', 'App\Models\City', 'id');
-        City::join('countryId', 'App\Models\Country', 'id');
-        $userCities = UserCity::getByCondition(['userId' => $this->userId], ' ORDER BY created_at');
-
-        UserGroup::join('groupId', 'App\Models\Group', 'id');
-        $userGroups = UserGroup::getByCondition(['userId' => $this->userId]);
+        Group::joinDB('groups.id', 'users_groups', 'group_id', [], false, ' AND users_groups.user_id=:userId');
+        $userGroups = Group::getByCondition(['userId' => $this->userId]);
 
         AlbumUser::join('albumId', 'App\Models\Album', 'id');
         Album::join('id', 'App\Models\AlbumPhoto', 'albumId', " AND status='active'");
         $userAlbums = AlbumUser::getByCondition(['userId' => $this->userId]);
-        $commentPhotosNum = 0;
-        foreach ($userAlbums as $userAlbum) {
-            foreach ($userAlbum->album->albumPhoto as $albumPhoto) {
-                $commentPhotosNum += AlbumPhotoComment::count(['albumPhotoId' => $albumPhoto->id]);
-            }
-        }
 
-        UserNews::join('newsId', 'App\Models\News', 'id');
-        UserNews::join('newsId', 'App\Models\NewsComment', 'newsId', ' LIMIT 3');
-        NewsComment::join('commentId', 'App\Models\Comment', 'id', " AND status='active'");
-        Comment::join('userId', 'App\Models\User', 'id');
-        $userNews = UserNews::getByCondition(['userId' => $this->userId]);
+        AlbumPhotoComment::joinDB('albums_photos_comments.comment_id', 'comments', 'id',
+            [], false, ' AND TO_DAYS(NOW())-TO_DAYS(comments.published)<=30');
+        AlbumPhotoComment::joinDB('albums_photos_comments.albums_photos_id', 'albums_photos', 'id');
+        AlbumPhotoComment::joinDB('albums_photos.album_id', 'albums_users', 'album_id',
+            [], false, ' AND albums_users.user_id=:userId');
+        $commentPhotosNum = AlbumPhotoComment::count(['userId' => $this->userId]);
+
+        News::joinDB('news.id', 'users_news', 'id', [], false, ' AND users_news.user_id=:userId');
+        News::join('id', 'App\Models\NewsComment', 'newsId', ' ORDER BY comments.published DESC LIMIT 3');
+        NewsComment::joinDB('news_comments.comment_id', 'comments', 'id', ['user_id' => 'userId',
+            'text' => 'text', 'status' => 'status', 'published' => 'published']);
+        NewsComment::joinDB('comments.user_id', 'users', 'id', ['first_name' => 'firstName', 'last_name' => 'lastName']);
+        NewsComment::joinDB('users.id', 'users_avatars', 'user_id', ['file_name' => 'avatarFileName'],
+            true, " AND users_avatars.status='active'");
+        $userNews = News::getByCondition(['userId' => $this->userId]);
 
         $commentNewsNum = 0;
         foreach ($userNews as $oneUserNews) {
-            $commentNewsNum += NewsComment::count(['newsId' => $oneUserNews->newsId]);
+            $commentNewsNum += NewsComment::count(['newsId' => $oneUserNews->id]);
+            foreach ($oneUserNews->newsComment as $oneComment) {
+                if ($oneComment->status == 'block') {
+                    $oneComment->text = '... <small>(комментарий пользователя был заблокирован)</small>';
+                } elseif ($oneComment->status == 'delete') {
+                    $oneComment->text = '... <small>(комментарий пользователя был удален)</small>';
+                }
+            }
         }
 
-        Friend::join('userSender', 'App\Models\User', 'id');
-        $friendReqs = Friend::getByCondition(['userReceiver' => $this->userId, 'status' => 'unapplied'], ' ORDER BY created_at DESC');
+        Friend::joinDB('friends.user_sender', 'users', 'id', ['first_name' => 'firstName', 'last_name' => 'lastName']);
+        Friend::joinDB('users.id', 'users_avatars', 'user_id', ['file_name' => 'avatarFileName'],
+            true, " AND users_avatars.status='active'");
+        $friendReqs = Friend::getByCondition(['userReceiver' => $this->userId, 'status' => 'unapplied'], ' ORDER BY friends.created_at DESC');
 
         $unreadMessagesNum = Message::count(['receiverId' => $this->userId, 'status' => 'unread']);
 
         $result = compact('templateNames', 'title', 'unreadMessagesNum', 'commentPhotosNum',
             'commentNewsNum', 'commentAvatarNum', 'user', 'userCities', 'userGroups',
             'userAlbums', 'userNews', 'friendReqs');
+
         return $result;
     }
 }

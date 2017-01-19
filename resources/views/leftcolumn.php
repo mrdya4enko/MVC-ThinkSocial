@@ -11,7 +11,7 @@
                     <p class="w3-center"><img src="/public/avatars/<?=$user->avatarFileName?>" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
                     <hr>
                     <!--         <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> Designer, UI</p> -->
-                    <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> г.<?=$userCities[0]->city->name?>, <?=$userCities[0]->city->country->name?></p>
+                    <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> г.<?=$userCities[0]->name?>, <?=$userCities[0]->countryName?></p>
                     <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> <?=$user->birthday?></p>
                 </div>
             </div>
@@ -23,7 +23,7 @@
                     <button onclick="myFunction('Demo1')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-circle-o-notch fa-fw w3-margin-right"></i> My Groups</button>
                     <div id="Demo1" class="w3-accordion-content w3-container">
                         <?php foreach ($userGroups as $userGroup): ?>
-                            <p><?=$userGroup->group->name?></p>
+                            <p><?=$userGroup->name?></p>
                         <?php endforeach; ?>
                     </div>
                     <button onclick="myFunction('Demo2')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-calendar-check-o fa-fw w3-margin-right"></i> My Events</button>
