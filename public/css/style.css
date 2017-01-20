@@ -1,6 +1,7 @@
-#addAlbumBlock {
+#addAlbumBlock,
+#addPhotoBlock {
     background: #fff;
-    height: 230px;
+    height: 140px;
     width: 740px;
     position: absolute;
     left: 50%;
@@ -24,7 +25,8 @@
 
     z-index: 100;
 }
-#addAlbum:hover {
+#addAlbum:hover,
+#addPhotos:hover {
     -webkit-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
     -moz-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
     -o-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
@@ -35,27 +37,37 @@
         position: absolute;
         right: 0;
     }
-    #addAlbumBlock form {
+    #cancelAddPhotoBlock img {
+        width: 30px;
+        position: absolute;
+        right: 0;
+    }
+    #addAlbumBlock form,
+    #addPhotoBlock form {
 
     }
-        #addAlbumBlock form label {
+        #addAlbumBlock form label,
+        #addPhotoBlock form label {
             margin: 25px;
             display: inline-block;
         }
         #addAlbumBlock form input[type='text'] {
             display: inline-block;
         }
-        #addAlbumBlock form input[type='file'] {
+        #addPhotoBlock form input[type='file'] {
             display: inline-block;
             width: 100%;
             margin: 10px 0px 50px 22px;
         }
-        #addAlbumBlock form input[type='submit'] {
-            margin-left: 40%;
+        #addAlbumBlock form input[type='submit'],
+        #addPhotoBlock form input[type='submit'] {
+            margin-left: 41%;
         }
         #addAlbumBlock form input[type='reset'] {
         }
+        #addPhotoBlock form input[type='reset'],
         #addAlbumBlock form input[type='reset'],
+        #addPhotoBlock form input[type='submit'],
         #addAlbumBlock form input[type='submit'] {
             color: #fff;
             background-color: #607d8b;
@@ -71,7 +83,8 @@
             transition: background-color .25s,color .15s,box-shadow .15s,opacity .25s,filter .25s,border .15s;
         }
 
-#addAlbumBlock.active {
+#addAlbumBlock.active,
+#addPhotoBlock.active {
     top: 80px;
     position: fixed;
     margin-left: -370px;
@@ -95,7 +108,9 @@
     height: 210px;
     display: inline-block;
     margin-right: 0px;
+    margin-bottom: 0px;
     vertical-align: top;
+    position: relative;
 }
     .blockAlbum a {
         text-decoration: none;
@@ -113,6 +128,13 @@
         vertical-align: top;
         padding-left: 15px;
         float: right;
+    }
+    .blockAlbum .deleteAlbum img{
+        width: 30px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin: 10px 10px 0 0;
     }
 .allAlbums {
     margin: 10px;
