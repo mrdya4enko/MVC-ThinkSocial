@@ -175,17 +175,7 @@ abstract class ActiveRecord
         if ($action == 'update' || $action == 'delete') {
             return;
         }
-        $rows = $query->fetchAll(\PDO::FETCH_ASSOC);
-        $result = [];
-        foreach ($rows as $row) {
-            $object = new $className();
-            foreach ($row as $field => $value) {
-                $object->{$field} = $value;
-            }
-            array_push($result, $object);
-        }
-
-        return $result;
+        return $result = $query->fetchAll(\PDO::FETCH_CLASS, $className);
     }
 
 
