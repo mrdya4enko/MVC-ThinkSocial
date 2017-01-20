@@ -31,20 +31,19 @@ class User extends ActiveRecord
          * @param string $password <p>Password</p>
          * @return boolean <p>The result of method execution</p>
          */
-        public static function register($name, $email, $password)
+        public static function register($options)
     {
         $user = new User();
-        $user->firstName = $name;
-        $user->middleName = '';
-        $user->lastName = '';
-        $user->birthday = '1900-01-01';
-        $user->sex = 'male';
-        $user->email = $email;
+        $user->firstName = $options['firstName'];
+        $user->middleName = $options['middleName'];
+        $user->lastName = $options['lastName'];
+        $user->sex = $options['gender'];
+        $user->email = $options['email'];
         $user->insert();
 
         $userPassword = new Password();
         $userPassword->userId = $user->id;
-        $userPassword->password = $password;
+        $userPassword->password = $options['password'];
         $userPassword->insert();
     }
 
@@ -103,15 +102,14 @@ class User extends ActiveRecord
 
 
         /**
-         * Checks the name: no less than 2 characters
+         * Checks the name: correct name
          * @param string $name <p>Name</p>
          * @return boolean <p>Result</p>
          */
         public static function checkName($name)
     {
-        if (strlen($name) >= 2) {
+        if(preg_match('/^[a-zA-Zа-яёА-ЯЁ\s\-]+$/u', $name))
             return true;
-        }
         return false;
     }
 
@@ -181,6 +179,65 @@ class User extends ActiveRecord
         $user = self::getUserById($userId);
 
         return $user['firstName'];
+    }
+
+    /**
+     * Send mail to user
+     * @param $mail
+     * @param $name
+     */
+    public static function sendMailToUser($mail, $name)
+    {
+        $to = substr(htmlspecialchars(trim($mail)), 0, 1000);
+        $subject = 'Регистрация на портале';
+        $message = '
+                <html>
+                    <head>
+                        <title>'.$subject.'</title>
+                    </head>
+                    <body>
+                        <strong>'.$name.' </strong>'.'<br>
+                        Спасибо за регистрацию на нашем портале                    
+                    </body>
+                </html>';
+
+        $headers  = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+
+        mail($to, $subject, $message, $headers);
+    }
+
+    /**
+     * Check user register fields
+     * @param $options
+     * @return bool
+     */
+    public static function checkUserDataFieldsRegister($options)
+    {
+        $errors = false;
+
+        if (!self::checkName($options['firstName'])) {
+            $errors['firstName'] = 'Incorrect First Name';
+        }
+        if (!self::checkName($options['middleName'])) {
+            $errors['middleName'] = 'Incorrect Middle Name';
+        }
+        if (!self::checkName($options['lastName'])) {
+            $errors['lastName'] = 'Incorrect Last Name';
+        }
+        if (!self::checkEmail($options['email'])) {
+            $errors['email'] = 'Incorrect email';
+        }
+
+        if (self::checkEmailExists($options['email'])) {
+            $errors['email'] = 'This email is already in use';
+        }
+
+        if (!self::checkPassword($options['password'])) {
+            $errors['password'] = 'The password must not be shorter than 6 characters';
+        }
+
+        return $errors;
     }
 
 

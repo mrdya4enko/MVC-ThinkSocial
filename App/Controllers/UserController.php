@@ -10,60 +10,32 @@ class UserController
      */
     public function actionRegister()
     {
-        $name = false;
-        $email = false;
-        $password = false;
         $result = false;
         $errors = false;
 
         if (isset($_POST['submit'])) {
 
-            $name = $_POST['name'];
-            $email = $_POST['email'];
-            $password = $_POST['password'];
+            $options['firstName'] = $_POST['firstName'];
+            $options['middleName'] = $_POST['middleName'];
+            $options['lastName'] = $_POST['lastName'];
+            $options['email'] = $_POST['email'];
+            $options['password'] = $_POST['password'];
+            $options['gender'] = $_POST['gender'];
 
+            $errors = User::checkUserDataFieldsRegister($options);
 
-            if (!User::checkName($name)) {
-                $errors['name'] = 'Имя не должно быть короче 2-х символов';
-            }
-            if (!User::checkEmail($email)) {
-                $errors['email'] = 'Неправильный email';
-            }
-            if (!User::checkPassword($password)) {
-                $errors['password'] = 'Пароль не должен быть короче 6-ти символов';
-            }
-            if (User::checkEmailExists($email)) {
-                $errors['email'] = 'Такой email уже используется';
-            }
+            if (!$errors) {
 
-            if ($errors == false) {
-
-                $result = User::register($name, $email, $password);
+                $result = User::register($options);
 
                 if($result){
-                	$to = substr(htmlspecialchars(trim($email)), 0, 1000);
-                    $subject = 'Регистрация на портале';
-              $message = '
-                <html>
-                    <head>
-                        <title>'.$subject.'</title>
-                    </head>
-                    <body>
-                        <strong>'.$name.' </strong>'.'<br>
-                        Спасибо за регистрацию на нашем портале                    
-                    </body>
-                </html>'; 
-  
-           $headers  = 'MIME-Version: 1.0' . "\r\n";
-           $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-          
-                     mail($to, $subject, $message, $headers);
-				}
+                    User::sendMailToUser($options['email'],$options['firstName']);
+                }
 
-               $userId = User::checkUserData($email, $password);
+               $userId = User::checkUserData($options['email'], $options['password']);
 
-                if ($userId == false) {
-                    $errors['password'] = 'Неправильные данные для входа на сайт';
+                if (!$userId) {
+                    $errors['password'] = 'Incorrect information to access the site';
                 } else {
                     User::auth($userId);
                 }
@@ -98,7 +70,7 @@ class UserController
 
             $userId = User::checkUserData($email, $password);
 
-            if ($userId == false) {
+            if (!$userId) {
                 $errors['password'] = 'Неправильные данные для входа на сайт';
             } else {
                 User::auth($userId);

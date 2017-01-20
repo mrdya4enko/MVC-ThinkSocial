@@ -10,7 +10,7 @@ include ROOT . '/resources/views/layouts/auth/header.php';
                     <form class="form-horizontal" role="form" method="POST" action="/user/login">
                        
 
-                        <div class="form-group<?php isset($errors['email']) ? ' has-error' : '' ?>">
+                        <div class="form-group<?= isset($errors['email']) ? ' has-error' : '' ?>">
                             <label class="col-md-4 control-label">E-Mail Address</label>
 
                             <div class="col-md-6">
@@ -18,13 +18,13 @@ include ROOT . '/resources/views/layouts/auth/header.php';
 
                                <?php if(isset($errors['email'])) {?>
                                     <span class="help-block">
-                                        <strong><?php echo $errors['email']; ?></strong>
+                                        <strong><?= $errors['email']; ?></strong>
                                     </span>
                               <?php } ?>
                             </div>
                         </div>
 
-                        <div class="form-group<?php isset($errors['password']) ? ' has-error' : '' ?>">
+                        <div class="form-group<?= isset($errors['password']) ? ' has-error' : '' ?>">
                             <label class="col-md-4 control-label">Password</label>
 
                             <div class="col-md-6">
@@ -32,7 +32,7 @@ include ROOT . '/resources/views/layouts/auth/header.php';
 
                                 <?php if(isset($errors['password'])) {?>
                                     <span class="help-block">
-                                        <strong><?php echo $errors['password']; ?></strong>
+                                        <strong><?= $errors['password']; ?></strong>
                                     </span>
                                <?php } ?>
                             </div>
