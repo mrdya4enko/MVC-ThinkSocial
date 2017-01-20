@@ -175,6 +175,9 @@ abstract class ActiveRecord
         if ($action == 'update' || $action == 'delete') {
             return;
         }
+        if ($action == 'count') {
+            return ($query->fetchAll(\PDO::FETCH_ASSOC))[0]['count'];
+        }
         $rows = $query->fetchAll(\PDO::FETCH_ASSOC);
         $result = [];
         foreach ($rows as $row) {
@@ -447,8 +450,6 @@ abstract class ActiveRecord
         $joinString = '';
         self::correctQueryJoinDB($fields, $joinString);
         self::$queryString = 'SELECT COUNT(*) AS count FROM ' . static::$tableName . " $joinString $conditionString $addCondition";
-        return (self::execSQL($condition, 'select'))[0]->count;
+        return (self::execSQL($condition, 'count'));
     }
 }
-
-
