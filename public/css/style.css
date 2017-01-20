@@ -24,7 +24,13 @@
 
     z-index: 100;
 }
-    #cancelAlbumBlock img{
+#addAlbum:hover {
+    -webkit-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
+    -moz-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
+    -o-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
+    box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
+}
+    #cancelAlbumBlock img {
         width: 30px;
         position: absolute;
         right: 0;
@@ -82,4 +88,41 @@
     opacity: 0.5;
     z-index: 99;
     background: #000;
+}
+
+.blockAlbum {
+    width: 360px;
+    height: 210px;
+    display: inline-block;
+    margin-right: 0px;
+    vertical-align: top;
+}
+    .blockAlbum a {
+        text-decoration: none;
+    }
+    .blockAlbum h3 {
+        display: inline;
+    }
+    .photoOnAlbum {
+        height: 124px;
+        max-width: 150px;
+    }
+    .blockAlbum ul {
+        list-style: none;
+        display: inline-block;
+        vertical-align: top;
+        padding-left: 15px;
+        float: right;
+    }
+.allAlbums {
+    margin: 10px;
+    background: #7d97a5;
+    color: #fff;
+}
+.w3-accordion-content .allAlbums:hover {
+    background: #57707d;
+    -webkit-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
+    -moz-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
+    -o-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
+    box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
 }

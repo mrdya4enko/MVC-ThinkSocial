@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
-use App\Models\{User, UserAvatarComment, UserCity,UserGroup, Friend,
-    Message, City, AlbumUser, Album, UserNews, AlbumPhotoComment, NewsComment, Comment};
+use App\Models\{User, UserAvatarComment, UserCity, UserGroup, Friend,
+    Message, City, AlbumUser, AlbumPhoto, Album, UserNews, AlbumPhotoComment, NewsComment, Comment};
 
 
 /**

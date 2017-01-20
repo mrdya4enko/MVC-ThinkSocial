@@ -33,7 +33,7 @@
                     <button onclick="myFunction('Demo3')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-users fa-fw w3-margin-right"></i> My Albums</button>
                     <div id="Demo3" class="w3-accordion-content w3-container">
                         <div class="w3-row-padding">
-                            <br>
+                            <a class="allAlbums" href="http://ts.local/albums/">All albums</a>
                             <?php foreach ($userAlbums as $userAlbum): ?>
                                 <div class="w3-half">
                                     <img src="/public/photos/<?=$userAlbum->album->albumPhoto[0]->fileName?>" style="width:100%" class="w3-margin-bottom" alt="<?=$userAlbum->album->name?>">

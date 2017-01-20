@@ -15,15 +15,15 @@
                         <div id="addAlbumBlock">
                             <a id="cancelAlbumBlock" href="#"><img src="/pictures/icon/cancel.png" alt="cancel"></a>
                             <form action="" method="post" enctype="multipart/form-data">
-                                <label for="albumName">Album name: </label>
-                                <input type="text" id="albumName" name="albumName" placeholder="Name" title="Name">
+                                <label for="albumName">New album name: </label>
+                                <input type="text" id="albumName" name="newAlbumName" placeholder="New name" title="New name">
                                 <input type="file" name="photoForAlbum" accept="image/jpeg,image/png" multiple>
                                 <input type="submit" value="Submit">
                                 <input type="reset" value="Reset">
                             </form>
                         </div>
                         <div class="w3-container w3-padding">
-                            <a href="#" id="addAlbum" class="w3-btn w3-theme"><i class="fa fa-pencil"></i>   Add album</a>
+                            <a href="#" id="addAlbum" class="w3-btn w3-theme"><i class="fa fa-pencil"></i>   Edit album</a>
                         </div>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
             foreach ($userAlbums as $oneUserAlbum) {
                 if ($oneUserAlbum->album->id === $albumId) {
                     echo <<<HEREDOC
-                        <div class="w3-container w3-card-2 w3-white w3-round w3-margin"><br>
+                        <div class="w3-container w3-card-2 w3-white w3-round w3-margin">
                             <p><h3>{$oneUserAlbum->album->name}</h3></p>
 HEREDOC;
                     foreach ($oneUserAlbum->album->albumPhoto as $photo)

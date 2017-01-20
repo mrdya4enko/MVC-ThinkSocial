@@ -16,5 +16,6 @@ class Album extends ActiveRecord
     protected static $tableFields = [
                                      'id'   => 'id',
                                      'name' => 'name',
+                                     'created_at' => 'createdAt'
                                     ];
 }

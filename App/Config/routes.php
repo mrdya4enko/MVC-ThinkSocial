@@ -18,6 +18,7 @@ return [
     'profile/input' => 'profile/input',
     'profile/insert' => 'profile/insert',
     'profile/delete' => 'profile/delete',
+    'albums/insert' => 'albums/insert',
     'albums' => 'albums/index',
     'album/([0-9]+)' => 'album/index/$1',
     // Main page
