@@ -1,5 +1,6 @@
 <?php
 namespace App\Controllers;
+use App\Components\ActiveRecord;
 use App\Models\{User, UserAvatarComment, UserCity, Group, UserGroup, Friend,
     Message, City, AlbumUser, Album, UserNews, News, AlbumPhotoComment, NewsComment, Comment};
 
@@ -48,14 +49,14 @@ class PageController
 
         City::joinDB('cities.id', 'users_cities', 'city_id', [], false, ' AND users_cities.user_id=:userId');
         City::joinDB('cities.country_id', 'countries', 'id', ['name' => 'countryName']);
-        $userCities = City::getByCondition(['userId' => $this->userId], ' ORDER BY users_cities.created_at');
+        $cities = City::getByCondition(['userId' => $this->userId], ' ORDER BY users_cities.created_at');
 
         Group::joinDB('groups.id', 'users_groups', 'group_id', [], false, ' AND users_groups.user_id=:userId');
-        $userGroups = Group::getByCondition(['userId' => $this->userId]);
+        $groups = Group::getByCondition(['userId' => $this->userId]);
 
-        AlbumUser::join('albumId', 'App\Models\Album', 'id');
-        Album::join('id', 'App\Models\AlbumPhoto', 'albumId', " AND status='active'");
-        $userAlbums = AlbumUser::getByCondition(['userId' => $this->userId]);
+        Album::joinDB('albums.id', 'albums_users', 'album_id', [], false, ' AND albums_users.user_id=:userId');
+        Album::join('id', 'App\Models\AlbumPhoto', 'albumId', " AND status='active' LIMIT 1");
+        $albums = Album::getByCondition(['userId' => $this->userId]);
 
         AlbumPhotoComment::joinDB('albums_photos_comments.comment_id', 'comments', 'id',
             [], false, ' AND TO_DAYS(NOW())-TO_DAYS(comments.published)<=30');
@@ -71,12 +72,12 @@ class PageController
         NewsComment::joinDB('comments.user_id', 'users', 'id', ['first_name' => 'firstName', 'last_name' => 'lastName']);
         NewsComment::joinDB('users.id', 'users_avatars', 'user_id', ['file_name' => 'avatarFileName'],
             true, " AND users_avatars.status='active'");
-        $userNews = News::getByCondition(['userId' => $this->userId]);
+        $news = News::getByCondition(['userId' => $this->userId]);
 
         $commentNewsNum = 0;
-        foreach ($userNews as $oneUserNews) {
-            $commentNewsNum += NewsComment::count(['newsId' => $oneUserNews->id]);
-            foreach ($oneUserNews->newsComment as $oneComment) {
+        foreach ($news as $oneNews) {
+            $commentNewsNum += NewsComment::count(['newsId' => $oneNews->id]);
+            foreach ($oneNews->newsComment as $oneComment) {
                 if ($oneComment->status == 'block') {
                     $oneComment->text = '... <small>(комментарий пользователя был заблокирован)</small>';
                 } elseif ($oneComment->status == 'delete') {
@@ -93,8 +94,11 @@ class PageController
         $unreadMessagesNum = Message::count(['receiverId' => $this->userId, 'status' => 'unread']);
 
         $result = compact('templateNames', 'title', 'unreadMessagesNum', 'commentPhotosNum',
-            'commentNewsNum', 'commentAvatarNum', 'user', 'userCities', 'userGroups',
-            'userAlbums', 'userNews', 'friendReqs');
+            'commentNewsNum', 'commentAvatarNum', 'user', 'cities', 'groups',
+            'albums', 'news', 'friendReqs');
+
+        ActiveRecord::clearJoins();
+        ActiveRecord::clearJoinsDB();
 
         return $result;
     }

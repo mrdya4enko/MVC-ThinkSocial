@@ -11,7 +11,7 @@
                     <p class="w3-center"><img src="/public/avatars/<?=$user->avatarFileName?>" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
                     <hr>
                     <!--         <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> Designer, UI</p> -->
-                    <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> г.<?=$userCities[0]->name?>, <?=$userCities[0]->countryName?></p>
+                    <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> г.<?=$cities[0]->name?>, <?=$cities[0]->countryName?></p>
                     <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> <?=$user->birthday?></p>
                 </div>
             </div>
@@ -22,8 +22,8 @@
                 <div class="w3-accordion w3-white">
                     <button onclick="myFunction('Demo1')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-circle-o-notch fa-fw w3-margin-right"></i> My Groups</button>
                     <div id="Demo1" class="w3-accordion-content w3-container">
-                        <?php foreach ($userGroups as $userGroup): ?>
-                            <p><?=$userGroup->name?></p>
+                        <?php foreach ($groups as $group): ?>
+                            <p><?=$group->name?></p>
                         <?php endforeach; ?>
                     </div>
                     <button onclick="myFunction('Demo2')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-calendar-check-o fa-fw w3-margin-right"></i> My Events</button>
@@ -34,9 +34,9 @@
                     <div id="Demo3" class="w3-accordion-content w3-container">
                         <div class="w3-row-padding">
                             <br>
-                            <?php foreach ($userAlbums as $userAlbum): ?>
+                            <?php foreach ($albums as $album): ?>
                                 <div class="w3-half">
-                                    <img src="/public/photos/<?=$userAlbum->album->albumPhoto[0]->fileName?>" style="width:100%" class="w3-margin-bottom" alt="<?=$userAlbum->album->name?>">
+                                    <img src="/public/photos/<?=$album->albumPhoto[0]->fileName?>" style="width:100%" class="w3-margin-bottom" alt="<?=$album->name?>">
                                 </div>
                             <?php endforeach; ?>
                         </div>
