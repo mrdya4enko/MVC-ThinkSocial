@@ -1,4 +1,5 @@
 <div class="w3-col m3 groups">
+
     <div class="avatar-drop-box">
         <span class="drop-box-advise"> Move your group photo here </span>
         <span class="drop-box-alt"> or </span>

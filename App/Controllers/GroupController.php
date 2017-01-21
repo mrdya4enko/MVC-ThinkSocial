@@ -2,13 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\Groups\Tools\InputFilter;
-use App\Models\User;
-use App\Models\Group;
 use App\Models\UserGroup;
-use App\Models\Groups\Validators\GroupValidator;
-use App\Models\Groups\Validators\UserValidator;
-use App\Models\Groups\Managers\GroupManager;
+use App\Models\Groups\Butler;
 
 /**
  * Class GroupController
@@ -18,31 +13,6 @@ use App\Models\Groups\Managers\GroupManager;
 class GroupController extends PageController
 {
     /**
-     * Contains array
-     * In cases with standard response should implements array with properties:
-     * templateName Array of views files to be rendered from App/Templates,
-     * title Page title,
-     * Other data for template rendering
-     * In cases with JSON response contains array with properties to response.
-     *
-     * @var array Should contain a response array.
-     */
-
-    private $response;
-
-    /**
-     * @var array Bag with validators
-     */
-
-    private $validator;
-
-    /**
-     * @var integer Id of current group
-     */
-
-    private $id;
-
-    /**
      * Returns Page with your groups and groups user is subscribed.
      *
      * @Route="groups"
@@ -50,18 +20,18 @@ class GroupController extends PageController
 
     public function actionIndex()
     {
-        $this->response = parent::actionIndex();
-        $this->response['templateNames'] = [
+        $response = parent::actionIndex();
+        $response['templateNames'] = [
             'head', 'navbar', 'leftcolumn', 'groups/mi_groups', 'rightcolumn', 'footer',
         ];
-        $this->response['title'] = 'Группы';
+        $response['title'] = 'Группы';
         UserGroup::clearJoins();
         UserGroup::clearJoinsDB();
         UserGroup::join('groupId', 'App\Models\Group', 'id');
         UserGroup::join('groupId', 'App\Models\GroupsAvatars', 'groupId', " AND status='active'");
-        $this->response['myGroups'] = UserGroup::getByCondition(['userId' => $this->userId, 'roleId' => 4]);
-        $this->response['Groups'] = UserGroup::getByCondition(['userId' => $this->userId, 'roleId' => 5]);
-        return $this->response;
+        $response['myGroups'] = UserGroup::getByCondition(['userId' => $this->userId, 'roleId' => 4]);
+        $response['Groups'] = UserGroup::getByCondition(['userId' => $this->userId, 'roleId' => 5]);
+        return $response;
     }
 
 
@@ -70,17 +40,17 @@ class GroupController extends PageController
      */
     public function actionFind()
     {
-        $this->response = parent::actionIndex();
-        $this->response['templateNames'] = [
+        $response = parent::actionIndex();
+        $response['templateNames'] = [
             'head', 'navbar', 'leftcolumn', 'groups/find', 'rightcolumn', 'footer',
         ];
-        $this->response['title'] = 'Группы';
+        $response['title'] = 'Группы';
         UserGroup::clearJoins();
         UserGroup::clearJoinsDB();
         UserGroup::join('groupId', 'App\Models\Group', 'id');
         UserGroup::join('groupId', 'App\Models\GroupsAvatars', 'groupId', " AND status='active'");
-        $this->response['findGroups'] = UserGroup::getByCondition(['userId' => $this->userId.'/<>']);
-        return $this->response;
+        $response['findGroups'] = UserGroup::getByCondition(['userId' => $this->userId.'/<>']);
+        return $response;
     }
 
     /**
@@ -89,13 +59,68 @@ class GroupController extends PageController
 
     public function actionSubscribe()
     {
+        $butler = new Butler(func_get_args());
+        if ($_SERVER['REQUEST_METHOD'] !== "POST") {
+            $butler['Messenger']->setHeader('Allow: POST');
+            $butler['Messenger']->send405Response();
+        } else {
+            if (!$butler['GroupValidator']->isExists()) {
+                $butler['Messenger']->setHeader('X-COMMENT-RESPONSE: Group in not Exists');
+                $butler['Messenger']->send404Response();
+            } else {
+                if ($butler['UserValidator']->isOwner()) {
+                    $butler['Messenger']->setHeader('X-COMMENT-RESPONSE: You are group owner');
+                    $butler['Messenger']->send406Response();
+                } else {
+                    if ($butler['UserValidator']->isSubscriber()) {
+                        $butler['Messenger']->setHeader('X-COMMENT-RESPONSE: You are already Subscribed');
+                        $butler['Messenger']->send406Response();
+                    } else {
+                        $result = $butler['GroupManager']->subscribe();
+                        if (!$result) {
+                            $butler['Messenger']->send503Response();
+                        } else {
+                            $butler['Messenger']->send204Response();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
      * Unsubscribe from the group
      */
-    public function actionUnsubscribe()
+    public function actionUnSubscribe()
     {
+        $butler = new Butler(func_get_args());
+        if ($_SERVER['REQUEST_METHOD'] !== "POST") {
+            $butler['Messenger']->setHeader('Allow: POST');
+            $butler['Messenger']->send405Response();
+        } else {
+            if (!$butler['GroupValidator']->isExists()) {
+                $butler['Messenger']->setHeader('X-COMMENT-RESPONSE: Group in not Exists');
+                $butler['Messenger']->send404Response();
+            } else {
+                if ($butler['UserValidator']->isOwner()) {
+                    $butler['Messenger']
+                        ->setHeader('X-COMMENT-RESPONSE: Group Owner has no possibility to Unsubscribe');
+                    $butler['Messenger']->send406Response();
+                } else {
+                    if (!$butler['UserValidator']->isSubscriber()) {
+                        $butler['Messenger']->setHeader('X-COMMENT-RESPONSE: You are not Subscribed');
+                        $butler['Messenger']->send406Response();
+                    } else {
+                        $result = $butler['GroupManager']->unSubscribe();
+                        if ($result) {
+                            $butler['Messenger']->send204Response();
+                        } else {
+                            $butler['Messenger']->send503Response();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -103,6 +128,19 @@ class GroupController extends PageController
      */
     public function actionMyGroupsJSON()
     {
+        $butler = new Butler();
+        if (!$_SERVER['REQUEST_METHOD'] !== "POST") {
+            $butler['Messenger']->setHeader('Allow: POST');
+            $butler['Messenger']->send405Response();
+        } else {
+            if (empty($_POST['search'])) {
+                $butler['Messenger']->setHeader('X-COMMENT-RESPONSE: No search property set');
+                $butler['Messenger']->send406Response();
+            } else {
+                $response = $butler['GroupManager']->userGroupsSearch();
+                $butler['Messenger']->sendNewJSONResponse($response);
+            }
+        }
     }
 
     /**
@@ -111,48 +149,45 @@ class GroupController extends PageController
 
     public function actionFindGroupsJSON()
     {
+        $butler = new Butler();
+        if (!$_SERVER['REQUEST_METHOD'] !== "POST") {
+            $butler['Messenger']->setHeader('Allow: POST');
+            $butler['Messenger']->send405Response();
+        } else {
+            if (empty($_POST['search'])) {
+                $butler['Messenger']->setHeader('X-COMMENT-RESPONSE: No search property set');
+                $butler['Messenger']->send406Response();
+            } else {
+                $response = $butler['GroupManager']->groupsSearch();
+                $butler['Messenger']->sendNewJSONResponse($response);
+            }
+        }
     }
 
     /**
-     * On success creates a new group and returns JSON string with message of response
-     * and url of group page, if request was unsuccessful returns headers with error message.
-     * Allowed Method is POST.
-     *
-     * @uses   GroupManager::addGroup() To add new Group in Database.
-     * @uses   GroupController::sendNewJSONResponse() To send response to the client.
-     * @return string JSON representation of GroupController::$response array.
-     * @see    GroupController::$response Content of response described.
-     * @see    GroupManager::class
+     * Create Group action
      */
     public function actionMyGroupCreateJSON()
     {
+        $butler = new Butler();
         if ($_SERVER['REQUEST_METHOD'] !== "POST") {
-            header("HTTP/1.1 405 Method is not allowed");
-            header("Allow: POST");
-            header("Refresh:1; url=/groups");
-            exit;
+            $butler['Messenger']->setHeader('Allow: POST');
+            $butler['Messenger']->send405Response();
         } else {
             if (empty($_POST['group-name'])) {
-                header("HTTP/1.1 406 Not Acceptable");
-                header("X-COMMENT-RESPONSE: Group name can't be empty");
-                exit;
+                $butler['Messenger']->setHeader('X-COMMENT-RESPONSE: Group name can\'t be empty');
+                $butler['Messenger']->send406Response();
             } else {
-                $groupManager = new GroupManager();
-                $group = $groupManager->addGroup();
+                $group = $butler['GroupManager']->addGroup();
                 if (!$group) {
-                    header("HTTP/1.1 503 Service Unavailable");
-                    header("Rerty-After: 15 minutes");
-                    exit;
+                    $butler['Messenger']->send503Response();
                 } else {
-                    $url = "http://ts.local/groups/page/id" . $group->id;
-                    header("HTTP/1.1 201 Created");
-                    header('Content-type: application/json; charset=utf-8');
-                    $this->response = [
-                        'message' => 'Group has been successfully created',
-                        'url' => $url,
-                    ];
-                    $this->sendNewJSONResponse();
-                    exit;
+                    $url = "/groups/page/id" . $group->id;
+                    $butler['Messenger']->setHeader('HTTP/1.1 201 Created');
+                    $butler['Messenger']->sendNewJSONResponse(
+                        ['message' => 'Group has been successfully created',
+                         'url' => $url]
+                    );
                 }
             }
         }
@@ -166,126 +201,8 @@ class GroupController extends PageController
 
     public function actionGetGroupPage()
     {
-        try {
-            $args = func_get_args();
-            $this->groupPageInit($args);
-            $this->response = $this->pageMicroController();
-            return $this->response;
-        } catch (\Exception $ex) {
-            return $this->actionGroupIsNotExists();
-        }
-    }
-
-
-    /**
-     * @param $args
-     * @throws \Exception
-     */
-    private function groupPageInit($args)
-    {
-        $filter = new InputFilter();
-        $this->id = $filter->idPrepare($args);
-        if (!empty($this->id)) {
-            $this->validator['group'] = new GroupValidator($this->id);
-            $this->validator['user'] = new UserValidator($this->id);
-        } else {
-            throw new \Exception("ID user has passed to URL is empty");
-        }
-    }
-
-    /**
-     * @return array
-     * @throws \Exception
-     */
-    private function pageMicroController()
-    {
-        if ($this->validator['group']->isExists()) {
-            $group = Group::getByID($this->id);
-            if ($this->validator['user']->IsOwner()) {
-                return $this->actionGroupOwner($group);
-            } elseif ($this->validator['user']->IsSubscriber()) {
-                return $this->actionGroupSubscriber($group);
-            } else {
-                return $this->actionGroupGuest($group);
-            }
-        } else {
-            throw new \Exception("Group is not Exists");
-        }
-    }
-
-    /**
-     * Action of group owner
-     *
-     * @param  $group
-     * @return array
-     */
-    private function actionGroupOwner(Group $group)
-    {
-        $this->response = parent::actionIndex();
-        $this->response['templateNames'] = ['head',
-            'navbar',
-            'leftcolumn',
-            'groups/management/groupPageContent',
-            'groups/management/groupPageInfo'];
-        $this->response['title'] = $group->name;
-        return $this->response;
-    }
-
-
-    /**
-     * @param Group $group
-     * @return array
-     */
-    private function actionGroupSubscriber(Group $group)
-    {
-        $this->response = parent::actionIndex();
-        $this->response['templateNames'] = ['head',
-            'navbar',
-            'leftcolumn'
-        ];
-        $this->response['title'] = $group->name;
-        return $this->response;
-    }
-
-
-    /**
-     * @param Group $group
-     * @return array
-     */
-    private function actionGroupGuest(Group $group)
-    {
-        $this->response = parent::actionIndex();
-        $this->response['templateNames'] = ['head',
-            'navbar',
-            'leftcolumn'
-        ];
-        $this->response['title'] = $group->name;
-        return $this->response;
-    }
-
-    /**
-     * @return array
-     */
-    private function actionGroupIsNotExists()
-    {
-        $this->response = parent::actionIndex();
-        $this->response['templateNames'] = ['head',
-            'navbar',
-            'leftcolumn'
-        ];
-        $this->response['title'] = "Group NoT Found";
-        return $this->response;
-    }
-
-    /**
-     * Returns to the client new JSON string.
-     */
-
-    private function sendNewJSONResponse()
-    {
-        if (is_array($this->response)) {
-            header("Content-Type: application/json");
-            echo json_encode($this->response);
-        }
+            $butler = new Butler(func_get_args());
+            $page = $butler->getPageManager();
+            return $page->response();
     }
 }

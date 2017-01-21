@@ -19,6 +19,10 @@ return [
     'profile/insert' => 'profile/insert',
     'profile/delete' => 'profile/delete',
     //Managing the user groups
+    'groups/page' => 'group/GetGroupPage',
+    'groups/add' => 'group/MyGroupCreateJSON',
+    'groups/subscribe' => 'group/Subscribe',
+    'groups/unsubscribe' => 'group/UnSubscribe',
     'groups/find' => 'group/find',
     'groups' => 'group/index',
     'group/subsribe/([0-9]+)' => 'group/subsribe/$1',
