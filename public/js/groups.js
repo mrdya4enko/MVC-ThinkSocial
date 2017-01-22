@@ -4,6 +4,7 @@
     var GROUP_CREATION_HANDLER = "/groups/add";
     var GROUP_SUBSCRIBE_HANDLER = "/groups/subscribe/";
     var GROUP_UNSUBSCRIBE_HANDLER = '/groups/unsubscribe/';
+    var GROUP_AVATAR_UPLOAD_HANDLER = '';
     var GROUP_CREATION_TIMER = 60000;
     var UNSUBSCRIBE_BUTTON_CLASS = 'w3-red';
     var SUBSCRIBE_BUTTON_CLASS = 'w3-indigo';
