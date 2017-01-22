@@ -11,14 +11,15 @@
     var offsetY = 0;
     var offsetX = 0;
     var hidden = 'sg-hidden';
-    var maxFileSize = 5000000;
+    var POST_MAX_SIZE = 5000000;
     var groupId = /id([0-9]+)$/;
 
     var panel = {},
         newsSubmit = {},
         dropBox = {},
         postNewsPanel = {},
-        groupCreationForm = {};
+        groupCreationForm = {},
+        avatarUploader;
 
 
     var checkNode = function (node) {
@@ -133,6 +134,11 @@
 
     };
 
+    var fileUpload = function()
+    {
+
+    };
+
     var showParange = function(event){
         event.preventDefault();
         offsetY = window.pageYOffset;
@@ -173,18 +179,41 @@
         documentChecker(node);
     };
 
-    var dropBoxOver = function () {
-      dropBox.classList.add('hover');
-      return false;
+    var dropBoxOver = function (event) {
+        event.preventDefault();
+        dropBox.classList.add('hover');
     };
 
     var dropBoxLeave = function () {
         dropBox.classList.remove('hover');
-        return false;
     };
 
-    var dropBoxUpload = function () {
+    var dropBoxUpload = function (event) {
+        event.preventDefault();
+        var file = event.dataTransfer.files[0];
+        if (file.size > POST_MAX_SIZE) {
 
+        } else {
+            var formData = new FormData();
+            formData.append("myfile", file);
+            var xhr = new XMLHttpRequest();
+
+            xhr.upload.onprogress = function(event) {
+                console.log(event.loaded + ' / ' + event.total);
+            };
+
+            xhr.onload = xhr.onerror = function() {
+                if (this.status == 200) {
+                   console.log("success");
+                } else {
+                    console.log("error " + this.status);
+                }
+            };
+            xhr.open("POST", "http://ts.local/groups/page/id15", true);
+            xhr.setRequestHeader("X_PAGE_ACTION", "AVATAR_UPLOAD");
+            xhr.send(formData);
+        }
+        console.log(file);
     };
 
 
@@ -203,6 +232,7 @@
                 eventSubscriber((groupBtns[i]), 'click', actionGroupSubscribe);
             }
         }
+
 
         eventSubscriber(document.getElementById('create-group-btn'), 'click', showParange);
         eventSubscriber(document.getElementById('create-group-close'), 'click', closeParange);

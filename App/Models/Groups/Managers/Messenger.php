@@ -17,6 +17,13 @@ class Messenger
         exit;
     }
 
+    public function send400Response()
+    {
+        header("HTTP/1.1 400 Bad Request");
+        header("X-RESPONSE-MESSAGE: Unknown Action");
+        exit;
+    }
+
     public function send404Response()
     {
         header("HTTP/1.1 404 Not Found");

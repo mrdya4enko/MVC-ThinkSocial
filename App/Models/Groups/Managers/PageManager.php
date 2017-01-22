@@ -26,16 +26,11 @@ class PageManager extends PageController
      */
     public function response()
     {
-        if ($this->butler['GroupValidator']->isExists()) {
-            if ($this->butler['UserValidator']->IsOwner()) {
-                return $this->actionGroupOwner();
-            } elseif ($this->butler['UserValidator']->IsSubscriber()) {
-                return $this->actionGroupSubscriber();
-            } else {
-                return $this->actionGroupGuest();
-            }
-        } else {
-            return $this->actionGroupIsNotExists();
+        if ($_SERVER['REQUEST_METHOD'] == "GET") {
+            $response = $this->getRequestHandler();
+            return $response;
+        } elseif ($_SERVER['REQUEST_METHOD'] == "POST") {
+            $this->postRequestHandler();
         }
     }
 
@@ -96,5 +91,32 @@ class PageManager extends PageController
         ];
         $response['title'] = "Group NoT Found";
         return $response;
+    }
+
+    /**
+     * @return array
+     */
+    private function getRequestHandler()
+    {
+        if ($this->butler['GroupValidator']->isExists()) {
+            if ($this->butler['UserValidator']->IsOwner()) {
+                return $this->actionGroupOwner();
+            } elseif ($this->butler['UserValidator']->IsSubscriber()) {
+                return $this->actionGroupSubscriber();
+            } else {
+                return $this->actionGroupGuest();
+            }
+        } else {
+            return $this->actionGroupIsNotExists();
+        }
+    }
+
+    private function postRequestHandler()
+    {
+        if ($_SERVER['HTTP_X_PAGE_ACTION'] == "AVATAR_UPLOAD") {
+            $file = "qqq";
+        } else {
+            $this->butler['Messenger']->send400Response();
+        }
     }
 }
