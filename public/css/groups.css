@@ -366,8 +366,9 @@
 }
 
 .groups .avatar-drop-box {
-    border: 5px dashed gray;
-    background: lightgray;
+    border: 5px dashed darkslategray;
+    background: radial-gradient(lightslategray, gray);
+    min-height: 190px;
 }
 
 .avatar-drop-box .avatar-upload-file {
@@ -381,7 +382,7 @@
     font-size: 19px;
     font-weight: 400;
     font-family: "Open Sans", "Helvetica", sans-serif;
-    color: lightseagreen;
+    color: darkseagreen;
 }
 
 .avatar-drop-box .drop-box-alt {
@@ -392,7 +393,7 @@
     font-size: 19px;
     font-weight: 400;
     font-family: "Open Sans", "Helvetica", sans-serif;
-    color: lightseagreen;
+    color: darkseagreen;
 }
 
 .avatar-drop-box .upload-wrapper {
@@ -403,8 +404,73 @@
 }
 
 .avatar-drop-box.hover {
-    border-color: yellow;
+    border-color: #437ef9;
 }
+
+.avatar-drop-box .progress {
+    transition: border-color 2s;
+}
+
+.avatar-drop-box.error {
+    border-color: #8e031e;
+}
+
+.avatar-drop-box .drop-box-upload-msg {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+    font-size: 19px;
+    font-weight: 400;
+    font-family: "Open Sans", "Helvetica", sans-serif;
+    color: darkseagreen;
+}
+
+.avatar-drop-box .progress-status-bar {
+    position: relative;
+    display: block;
+    width: 80%;
+    margin: 60px auto 30px;
+    min-height: 30px;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.progress-status-bar .progress-msg {
+    position: absolute;
+    left: 40%;
+    top: 0;
+    font-size: 10px;
+}
+
+.progress-status-bar .progress-percentage {
+    display: block;
+    width: 50%;
+    background: #437ef9;
+    min-height: 15px;
+    border-radius: 10%;
+}
+
+.drop-box-upload-error {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+    font-size: 19px;
+    font-weight: 400;
+    font-family: "Open Sans", "Helvetica", sans-serif;
+    color: #8e031e;
+}
+
+.drop-box-upload-error-msg {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 19px;
+    font-weight: 400;
+    font-family: "Open Sans", "Helvetica", sans-serif;
+    color: #8e031e;
+}
+
+
 
 .subscriber-container-empty {
     color: gray;

@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/css/w3-theme-blue-grey.css">
     <link rel="stylesheet" href="/css/css.css">
     <link rel="stylesheet" href="/css/font-awesome.css">
-    <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/groups.css">
     <script src="/js/groups.js"></script>
     <link href="/favicon.ico" rel="icon" type="image/x-icon" />

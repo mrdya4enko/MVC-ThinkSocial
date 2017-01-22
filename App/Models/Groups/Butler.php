@@ -87,5 +87,4 @@ class Butler implements \ArrayAccess
     {
         return isset($this->container[$offset]) ? $this->container[$offset] : null;
     }
-
 }
