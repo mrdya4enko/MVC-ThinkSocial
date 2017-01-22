@@ -1,9 +1,11 @@
 <?php
 namespace App\Models\Groups;
 
+use App\Controllers\PageController;
 use App\Models\Groups\Managers\Messenger;
+use App\Models\Groups\Managers\GetController;
 use App\Models\Groups\Managers\GroupManager;
-use App\Models\Groups\Managers\PageManager;
+use App\Models\Groups\Managers\PostController;
 use App\Models\Groups\Validators\UserValidator;
 use App\Models\Groups\Validators\GroupValidator;
 use App\Models\Groups\Tools\InputFilter;
@@ -30,6 +32,9 @@ class Butler implements \ArrayAccess
         $this->container['GroupManager'] = new GroupManager($this);
         $this->container['GroupValidator'] = new GroupValidator($this);
         $this->container['UserValidator'] = new UserValidator($this);
+        $this->container['GetController'] = new GetController($this);
+        $this->container['PostController'] = new PostController($this);
+        $this->container['PageController'] = new PageController();
         $this->container['CurrentGroup'] = null;
         $this->container['UserGroup'] = null;
         $this->container['GroupAvatars'] = null;
@@ -41,13 +46,6 @@ class Butler implements \ArrayAccess
         }
     }
 
-    /**
-     * @return PageManager
-     */
-    public function getPageManager()
-    {
-        return new PageManager($this);
-    }
 
     /**
      * @param mixed $offset

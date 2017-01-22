@@ -183,7 +183,7 @@ class GroupController extends PageController
                     $butler['Messenger']->send503Response();
                 } else {
                     $url = "/groups/page/id" . $group->id;
-                    $butler['Messenger']->setHeader('HTTP/1.1 201 Created');
+                    $butler['Messenger']->setHeader('HTTP/1.1 201 Group has been Created');
                     $butler['Messenger']->sendNewJSONResponse(
                         ['message' => 'Group has been successfully created',
                          'url' => $url]
@@ -199,10 +199,15 @@ class GroupController extends PageController
      * @Route="group/page/id"
      */
 
-    public function actionGetGroupPage()
+    public function actionGroupPage()
     {
-            $butler = new Butler(func_get_args());
-            $page = $butler->getPageManager();
-            return $page->response();
+        $butler = new Butler(func_get_args());
+        if ($butler['GetController']->methodCheck()) {
+             return $butler['GetController']->handleRequest();
+        } elseif ($butler['PostController']->methodCheck()) {
+             $butler['PostController']->handleRequest();
+        } else {
+            $butler['Messenger']->send405Response();
+        }
     }
 }

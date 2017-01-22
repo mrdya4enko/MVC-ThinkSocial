@@ -19,7 +19,7 @@ return [
     'profile/insert' => 'profile/insert',
     'profile/delete' => 'profile/delete',
     //Managing the user groups
-    'groups/page' => 'group/GetGroupPage',
+    'groups/page' => 'group/GroupPage',
     'groups/add' => 'group/MyGroupCreateJSON',
     'groups/subscribe' => 'group/Subscribe',
     'groups/unsubscribe' => 'group/UnSubscribe',

@@ -14,7 +14,7 @@
     var hidden = 'sg-hidden';
     var POST_MAX_SIZE = 5000000;
     var groupId = /id([0-9]+)$/;
-
+    var APPROPRIATE_IMEGE_TYPES = {'image/gif' : 1, 'image/jpeg' : 2, 'image/png' : 3, 'image/svg+xml' : 4};
     var panel = {},
         newsSubmit = {},
         dropBox = {},
@@ -100,7 +100,6 @@
         }
     };
 
-
     var actionGroupCreate = function (event) {
         event.preventDefault();
         preventAditionRequest();
@@ -132,11 +131,6 @@
                 }
             }
         }
-
-    };
-
-    var fileUpload = function()
-    {
 
     };
 
@@ -189,32 +183,90 @@
         dropBox.classList.remove('hover');
     };
 
+    var dropBoxError = function (box, message) {
+        var firstStage = box.innerHTML;
+        var errorBox = document.createElement("DIV");
+        errorBox.classList.add('drop-box-upload-error');
+        errorBox.innerHTML = "Sorry, but this file hasn't been uploaded.";
+        var errorMsg = document.createElement("DIV");
+        errorMsg.classList.add('drop-box-upload-error-msg');
+        errorMsg.innerHTML = message;
+        box.innerHTML = "";
+        box.appendChild(errorBox);
+        box.appendChild(errorMsg);
+        box.classList.add('error');
+        setTimeout(function () {
+            box.innerHTML = firstStage;
+            box.classList.remove('error');
+        }, 5000);
+    };
+
+    var dropBoxFileUpload = function(box, file)
+    {
+        var firstState = box.innerHTML;
+        if (file.type in APPROPRIATE_IMEGE_TYPES) {
+            if(parseInt(file.size) > POST_MAX_SIZE) {
+                dropBoxError(box, "Inappropriate file size. <br> Max Size Available 5M");
+            } else {
+                var formData = new FormData();
+                formData.append("avatar", file);
+                var request = new XMLHttpRequest();
+                request.open('POST', location.href, true);
+                request.setRequestHeader('X_PAGE_ACTION', "avatar_upload");
+
+                var progressTitle = document.createElement('DIV');
+                progressTitle.classList.add("drop-box-upload-msg");
+                progressTitle.innerText = 'Uploading file in progress:';
+                var progressBar = document.createElement('DIV');
+                progressBar.classList.add('progress-status-bar');
+                var progressMsg = document.createElement('SPAN');
+                progressMsg.classList.add("progress-msg");
+                var progressPercent = document.createElement('SPAN');
+                progressPercent.classList.add("progress-percentage");
+                progressBar.appendChild(progressMsg);
+                progressBar.appendChild(progressPercent);
+
+                request.upload.onloadstart = function (event) {
+                    box.innerHTML = "";
+                      box.appendChild(progressTitle);
+                      box.appendChild(progressBar);
+                };
+
+                request.upload.onprogress = function (event) {
+                    var percent = parseInt(parseInt(event.loaded) / parseInt(event.total) * 100);
+                    progressMsg.innerHTML = percent + " / 100";
+                    progressPercent.style.width = percent + "%";
+                };
+
+                request.upload.onerror = function (event) {
+                    box.innerHTML = firstState;
+                    dropBoxError(box, "Error while uploading");
+                };
+
+                request.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+
+                        }
+                    }
+                };
+                request.send(formData);
+            }
+        } else {
+            dropBoxError(box, "Inappropriate file format <br> Available: jpeg,png,gif,svg");
+        }
+    };
+
     var dropBoxUpload = function (event) {
         event.preventDefault();
+        dropBox.classList.remove('hover');
+        var that = this;
         var file = event.dataTransfer.files[0];
-        if (file.size > POST_MAX_SIZE) {
+        dropBoxFileUpload(that, file);
+    };
 
-        } else {
-            var formData = new FormData();
-            formData.append("myfile", file);
-            var xhr = new XMLHttpRequest();
+    var dropBoxFormUpload = function (event) {
 
-            xhr.upload.onprogress = function(event) {
-                console.log(event.loaded + ' / ' + event.total);
-            };
-
-            xhr.onload = xhr.onerror = function() {
-                if (this.status == 200) {
-                   console.log("success");
-                } else {
-                    console.log("error " + this.status);
-                }
-            };
-            xhr.open("POST", "http://ts.local/groups/page/id15", true);
-            xhr.setRequestHeader("X_PAGE_ACTION", "AVATAR_UPLOAD");
-            xhr.send(formData);
-        }
-        console.log(file);
     };
 
 

@@ -444,8 +444,8 @@
 
 .progress-status-bar .progress-percentage {
     display: block;
-    width: 50%;
-    background: #437ef9;
+    width: 0;
+    background: #529bed;
     min-height: 15px;
     border-radius: 10%;
 }

@@ -83,4 +83,8 @@ class GroupManager
         $this->butler['UserGroup'] = null;
         return true;
     }
+
+    public function updateAvatar()
+    {
+    }
 }
