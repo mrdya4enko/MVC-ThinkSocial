@@ -3,6 +3,6 @@
 return [
     'host' => 'localhost',
     'dbname' => 'ts',
-    'user' => 'root',
-    'password' => 'nekro400',
+    'user' => 'dev',
+    'password' => 'qqq',
 ];

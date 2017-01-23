@@ -9,7 +9,6 @@
                     <input title="Поиск групп" type="search" class="group-search" placeholder="Public groups">
                 </div>
             </div>
-
             <?php foreach ($findGroups as $findGroup) : ?>
             <section class="group-card">
                 <img src="<?= "/avatars/" . $findGroup->groupsAvatars[0]->fileName;?>" class="group-card__avatar" width="100px" height="100px">
@@ -20,12 +19,8 @@
                 <a href="/groups/subscribe/id<?= $findGroup->group->id;?>" class="group-card__subs w3-btn w3-ripple w3-indigo"> Subscribe </a>
             </section>
             <?php endforeach; ?>
-
         </div>
-
-
 <!--    </div>-->
-
     <!-- End Page Container -->
     <div id="parange" class="parange">
         <div class="create-group">

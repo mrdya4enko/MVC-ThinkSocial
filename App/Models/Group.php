@@ -28,6 +28,6 @@ class Group extends ActiveRecord
      */
     public function __construct()
     {
-            $this->status = "active";
+            $this->status = 'active';
     }
 }

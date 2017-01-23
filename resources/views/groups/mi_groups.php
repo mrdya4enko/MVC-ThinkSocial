@@ -9,7 +9,6 @@
                     <input title="Поиск групп" type="search" class="group-search" placeholder="Search in your groups">
                 </div>
             </div>
-
             <?php foreach ($myGroups as $myGroup) : ?>
                 <section class="group-card mine">
                 <img src="<?= "/avatars/" . $myGroup->groupsAvatars[0]->fileName;?>" class="group-card__avatar" width="100px" height="100px">
@@ -32,10 +31,7 @@
             </section>
             <?php endforeach; ?>
         </div>
-
-
 <!--    </div>-->
-
 <!--     End Page Container -->
     <div id="parange" class="parange">
         <div class="create-group">

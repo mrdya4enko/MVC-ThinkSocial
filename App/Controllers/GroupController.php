@@ -29,8 +29,13 @@ class GroupController extends PageController
         UserGroup::clearJoinsDB();
         UserGroup::join('groupId', 'App\Models\Group', 'id');
         UserGroup::join('groupId', 'App\Models\GroupsAvatars', 'groupId', " AND status='active'");
-        $response['myGroups'] = UserGroup::getByCondition(['userId' => $this->userId, 'roleId' => 4]);
-        $response['Groups'] = UserGroup::getByCondition(['userId' => $this->userId, 'roleId' => 5]);
+
+        $response['myGroups'] = UserGroup::getByCondition([
+            'userId' => $this->userId,
+            'roleId' => UserGroup::USER_GROUP_OWNER]);
+        $response['Groups'] = UserGroup::getByCondition([
+            'userId' => $this->userId,
+            'roleId' => UserGroup::USER_GROUP_SUBSCRIBER]);
         return $response;
     }
 
@@ -49,7 +54,12 @@ class GroupController extends PageController
         UserGroup::clearJoinsDB();
         UserGroup::join('groupId', 'App\Models\Group', 'id');
         UserGroup::join('groupId', 'App\Models\GroupsAvatars', 'groupId', " AND status='active'");
-        $response['findGroups'] = UserGroup::getByCondition(['userId' => $this->userId.'/<>']);
+        $response['findGroups'] = UserGroup::getByDirectSQL(
+            ['userId' => $this->userId],
+            'SELECT distinct group_id as groupId FROM users_groups 
+                    WHERE user_id <> :userId AND group_id NOT IN 
+                          (SELECT group_id FROM users_groups WHERE user_id = :userId)'
+        );
         return $response;
     }
 

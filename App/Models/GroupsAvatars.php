@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Components\ActiveRecord;
@@ -9,7 +10,7 @@ use App\Components\ActiveRecord;
  */
 class GroupsAvatars extends ActiveRecord
 {
-    const DEFAULT_AVATAR_PIC = "group-no-avatar.png";
+    const DEFAULT_AVATAR_PIC = 'group-no-avatar.png';
     public $fileName;
     public $groupId;
     public $status = 'active';
