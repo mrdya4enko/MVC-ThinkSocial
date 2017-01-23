@@ -4,7 +4,6 @@
     var GROUP_CREATION_HANDLER = "/groups/add";
     var GROUP_SUBSCRIBE_HANDLER = "/groups/subscribe/";
     var GROUP_UNSUBSCRIBE_HANDLER = '/groups/unsubscribe/';
-    var GROUP_AVATAR_UPLOAD_HANDLER = '';
     var GROUP_CREATION_TIMER = 60000;
     var UNSUBSCRIBE_BUTTON_CLASS = 'w3-red';
     var SUBSCRIBE_BUTTON_CLASS = 'w3-indigo';
@@ -14,7 +13,7 @@
     var hidden = 'sg-hidden';
     var POST_MAX_SIZE = 5000000;
     var groupId = /id([0-9]+)$/;
-    var APPROPRIATE_IMEGE_TYPES = {'image/gif' : 1, 'image/jpeg' : 2, 'image/png' : 3, 'image/svg+xml' : 4};
+    var APPROPRIATE_IMEGE_TYPES = {'image/gif' : 1, 'image/jpeg' : 2, 'image/png' : 3};
     var panel = {},
         newsSubmit = {},
         dropBox = {},
@@ -122,16 +121,14 @@
         request.onreadystatechange = function () {
             if (this.readyState == 4) {
                 if (this.status == 201) {
-                    response = JSON.parse(this.responseText);
-                    messageBoxSuccess.innerHTML = response.message;
+                    messageBoxSuccess.innerHTML = request.getResponseHeader("X-COMMENT-RESPONSE");
                     form.insertBefore(messageBoxSuccess, form.firstChild);
                     setTimeout(function () {
-                        location.href = response.url;
+                        location.href = request.getResponseHeader("Location");
                     }, 1000);
                 }
             }
         }
-
     };
 
     var showParange = function(event){
@@ -245,7 +242,7 @@
 
                 request.onreadystatechange = function () {
                     if (this.readyState == 4) {
-                        if (this.status == 200) {
+                        if (this.status == 201) {
 
                         }
                     }
@@ -285,8 +282,6 @@
                 eventSubscriber((groupBtns[i]), 'click', actionGroupSubscribe);
             }
         }
-
-
         eventSubscriber(document.getElementById('create-group-btn'), 'click', showParange);
         eventSubscriber(document.getElementById('create-group-close'), 'click', closeParange);
         eventSubscriber(postNewsPanel, 'click', showNewsAdder);

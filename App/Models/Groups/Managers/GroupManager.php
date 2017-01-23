@@ -84,7 +84,25 @@ class GroupManager
         return true;
     }
 
-    public function updateAvatar()
+    public function saveAvatar()
     {
+        $path = "avatars";
+        $id = $this->butler['CurrentGroup']->id;
+        $name = str_replace(" ", "_", $this->butler['CurrentGroup']->name);
+        $ext = $this->butler['InputFilter']->getFileExtension();
+        $imageName =  $id . "_" . $name . "_" . "Avatar" . "." . $ext;
+        $fullPath = $path . DIRECTORY_SEPARATOR . $imageName;
+        if (!move_uploaded_file($_FILES['avatar']['tmp_name'], $fullPath)) {
+            return false;
+        } else {
+            $avatar = GroupsAvatars::getByCondition(['groupId' => $id])[0];
+            $avatar->fileName = $imageName;
+            if (true) {
+                $avatar->update();
+                return $fullPath;
+            } else {
+                return false;
+            }
+        }
     }
 }

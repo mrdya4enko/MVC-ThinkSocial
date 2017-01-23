@@ -40,6 +40,19 @@ class PostController implements GroupPageMethodController
 
     private function updateAvatar()
     {
+        if (!$this->butler['InputFilter']->isValidPicture($_FILES['avatar'])) {
+            $msg = "X-COMMENT-RESPONSE:" . $this->butler['InputFilter']->getReason();
+            $this->butler['Messenger']->setHeader($msg);
+            $this->butler['Messenger']->send406Response();
+        } else {
+            $result = $this->butler['GroupManager']->saveAvatar();
+            if (!$result) {
+                $this->butler['Messenger']->send503Response();
+            } else {
+                $this->butler['Messenger']->setHeader("Location: $result");
+                $this->butler['Messenger']->send201Response();
+            }
+        }
     }
 
     public function methodCheck()

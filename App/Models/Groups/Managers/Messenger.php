@@ -10,6 +10,13 @@ class Messenger
 {
     private $headers;
 
+    public function send201Response()
+    {
+        header("HTTP/1.1 201 Created");
+        $this->prepareHeaders();
+        exit;
+    }
+
     public function send204Response()
     {
         header("HTTP/1.1 204 No Content");
@@ -90,8 +97,12 @@ class Messenger
     private function prepareHeaders()
     {
         if (!empty($this->headers)) {
-            foreach ($this->headers as $header) {
-                header($header);
+            if (headers_sent()) {
+                exit;
+            } else {
+                foreach ($this->headers as $header) {
+                    header($header);
+                }
             }
         }
     }

@@ -183,11 +183,9 @@ class GroupController extends PageController
                     $butler['Messenger']->send503Response();
                 } else {
                     $url = "/groups/page/id" . $group->id;
-                    $butler['Messenger']->setHeader('HTTP/1.1 201 Group has been Created');
-                    $butler['Messenger']->sendNewJSONResponse(
-                        ['message' => 'Group has been successfully created',
-                         'url' => $url]
-                    );
+                    $butler['Messenger']->setHeader("Location: $url");
+                    $butler['Messenger']->setHeader('X-COMMENT-RESPONSE: Group has been successfully created');
+                    $butler['Messenger']->send201Response();
                 }
             }
         }
@@ -207,7 +205,7 @@ class GroupController extends PageController
         } elseif ($butler['PostController']->methodCheck()) {
              $butler['PostController']->handleRequest();
         } else {
-            $butler['Messenger']->send405Response();
+             $butler['Messenger']->send405Response();
         }
     }
 }
