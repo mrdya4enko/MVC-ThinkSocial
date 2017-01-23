@@ -12,8 +12,6 @@ use App\Models\{News, NewsComment};
 
 class SiteController extends PageController
 {
-
-
     private function getNewsInfo()
     {
         News::joinDB('news.id', 'users_news', 'id', [], false, ' AND users_news.user_id=:userId');
@@ -38,7 +36,7 @@ class SiteController extends PageController
         return $news;
     }
 
-    public function actionIndex()
+    public function actionIndex($id='')
     {
         $result = parent::actionIndex();
         $result['templateNames'] = [

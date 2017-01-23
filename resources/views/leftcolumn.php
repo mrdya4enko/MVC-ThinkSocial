@@ -34,6 +34,7 @@
                     <button onclick="myFunction('Demo3')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-users fa-fw w3-margin-right"></i> My Albums</button>
                     <div id="Demo3" class="w3-accordion-content w3-container">
                         <div class="w3-row-padding">
+                            <a class="allAlbums" href="/albums/">All albums</a>
                             <br>
                             <?php foreach ($albums as $album): ?>
                                 <div class="w3-half">

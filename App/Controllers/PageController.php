@@ -90,7 +90,7 @@ class PageController
     }
 
 
-    public function actionIndex()
+    public function actionIndex($id='')
     {
         $this->userId = User::checkLogged();
 

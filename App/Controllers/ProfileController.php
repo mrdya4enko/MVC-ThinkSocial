@@ -13,9 +13,9 @@ class ProfileController extends PageController
 {
 
 
-    public function actionShow()
+    public function actionShow($id='')
     {
-        $result = parent::actionIndex();
+        $result = parent::actionIndex($id);
         $result['templateNames'] = [
             'head', 'navbar', 'leftcolumn', 'middleprofile', 'rightcolumn', 'footer',
         ];
@@ -31,9 +31,9 @@ class ProfileController extends PageController
     }
 
 
-    public function actionEdit()
+    public function actionEdit($id='')
     {
-        $result = parent::actionIndex();
+        $result = parent::actionIndex($id);
         $result['templateNames'] = [
             'head', 'navbar', 'leftcolumn', 'middleprofile', 'rightcolumn', 'footer',
         ];
@@ -49,9 +49,9 @@ class ProfileController extends PageController
     }
 
 
-    public function actionInput()
+    public function actionInput($id='')
     {
-        $result = parent::actionIndex();
+        $result = parent::actionIndex($id);
         $result['templateNames'] = [
             'head', 'navbar', 'leftcolumn', 'middleprofile', 'rightcolumn', 'footer',
         ];
