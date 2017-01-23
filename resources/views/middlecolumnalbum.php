@@ -24,7 +24,7 @@
                         <div id="addPhotoBlock">
                             <a id="cancelAddPhotoBlock" href="#"><img src="/pictures/icon/cancel.png" alt="cancel"></a>
                             <form action="/album/insert/<?=$albumId;?>" method="post" enctype="multipart/form-data">
-                                <input type="file" name="uploadPhoto" accept="image/jpeg,image/png" multiple>
+                                <input type="file" name='uploadPhoto[]' multiple>
                                 <input type="submit" value="Submit">
                                 <input type="reset" value="Reset">
                             </form>
