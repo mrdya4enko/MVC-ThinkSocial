@@ -1,7 +1,7 @@
 <div class="w3-col m5 groups">
             <section class="group-header">
-                <h2 class="group-name"> Minions Time </h2>
-                <div class="group-desc"> Be grateful with minions! </div>
+                <h2 class="group-name"> <?= $currentGroup->name; ?> </h2>
+                <div class="group-desc"> <?= $currentGroup->description; ?></div>
             </section>
 
             <div class="post-news-panel">

@@ -9,33 +9,29 @@
                     <input title="Поиск групп" type="search" class="group-search" placeholder="Search in your groups">
                 </div>
             </div>
-
             <?php foreach ($myGroups as $myGroup) : ?>
                 <section class="group-card mine">
-                <img src="<?php echo $myGroup->groupsAvatars[0]->fileName;?>" class="group-card__avatar" width="100px" height="100px">
+                <img src="<?= "/avatars/" . $myGroup->groupsAvatars[0]->fileName;?>" class="group-card__avatar" width="100px" height="100px">
                 <div class="group-desc">
-                    <a href="/group/<?php echo $myGroup->group->id;?>" class="group-card__group-name"> <?php echo $myGroup->group->name;?> </a>
-                    <div class="group-card__desc"> <?php echo $myGroup->group->description;?> </div>
+                    <a href="/groups/page/id<?= $myGroup->group->id;?>" class="group-card__group-name"> <?= $myGroup->group->name;?> </a>
+                    <div class="group-card__desc"> <?= $myGroup->group->description;?> </div>
                 </div>
-                <a href="/group/edit/<?php echo $myGroup->group->id;?>" class="group-card__subs w3-btn w3-ripple w3-teal"> Manage </a>
+                <a href="/groups/page/id<?= $myGroup->group->id;?>" class="group-card__subs w3-btn w3-ripple w3-teal"> To Page </a>
             </section>
             <?php endforeach; ?>
 
             <?php foreach ($Groups as $Group) : ?>
             <section class="group-card">
-                <img src="<?php echo $Group->groupsAvatars[0]->fileName;?>" class="group-card__avatar" width="100px" height="100px">
+                <img src="<?= "/avatars/" .  $Group->groupsAvatars[0]->fileName;?>" class="group-card__avatar" width="100px" height="100px">
                 <div class="group-desc">
-                    <a href="/group/<?php echo $Group->group->id;?>" class="group-card__group-name"> <?php echo $Group->group->name;?> </a>
-                     <div class="group-card__desc"> <?php echo $Group->group->description;?> </div>
+                    <a href="/groups/page/id<?= $Group->group->id;?>" class="group-card__group-name"> <?= $Group->group->name;?> </a>
+                     <div class="group-card__desc"> <?= $Group->group->description;?> </div>
                 </div>
-                <a href="#" class="group-card__subs w3-btn w3-ripple w3-red"> Unsubscribe </a>
+                <a href="/groups/unsubscribe/id<?= $Group->group->id?>" class="group-card__subs w3-btn w3-ripple w3-red"> Unsubscribe </a>
             </section>
             <?php endforeach; ?>
         </div>
-
-
 <!--    </div>-->
-
 <!--     End Page Container -->
     <div id="parange" class="parange">
         <div class="create-group">
