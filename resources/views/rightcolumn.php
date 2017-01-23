@@ -1,5 +1,5 @@
         <!-- Right Column -->
-        <div class="w3-col m2 groups">
+        <div class="w3-col m2">
             <div class="w3-card-2 w3-round w3-white w3-center">
                 <div class="w3-container">
                     <p>Upcoming Events:</p>

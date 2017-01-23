@@ -7,7 +7,7 @@
         <div id="forFogging">
 
         </div>
-        <div class="w3-col m6">
+        <div class="w3-col m7">
 
             <div class="w3-row-padding">
                 <div class="w3-col m12">

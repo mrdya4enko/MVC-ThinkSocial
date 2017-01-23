@@ -7,9 +7,9 @@ use App\Models\{
 
 class AlbumsController extends PageController
 {
-    public function actionIndex($id='')
+    public function actionIndex()
     {
-        $result = parent::actionIndex($id);
+        $result = parent::actionIndex();
 
         AlbumUser::join('albumId', 'App\Models\Album', 'id');
         Album::join('id', 'App\Models\AlbumPhoto', 'albumId', " AND status='active'");

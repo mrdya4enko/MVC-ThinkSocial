@@ -36,7 +36,7 @@ class SiteController extends PageController
         return $news;
     }
 
-    public function actionIndex($id='')
+    public function actionIndex()
     {
         $result = parent::actionIndex();
         $result['templateNames'] = [

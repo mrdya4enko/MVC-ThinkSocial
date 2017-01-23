@@ -1,5 +1,5 @@
     <!-- Middle Column -->
-    <div class="w3-col m6">
+    <div class="w3-col m7">
 
     <style>
         label {
