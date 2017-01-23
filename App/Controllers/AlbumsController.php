@@ -10,6 +10,11 @@ class AlbumsController extends PageController
     public function actionIndex($id='')
     {
         $result = parent::actionIndex($id);
+
+        AlbumUser::join('albumId', 'App\Models\Album', 'id');
+        Album::join('id', 'App\Models\AlbumPhoto', 'albumId', " AND status='active'");
+        $result['albumsUsers'] = AlbumUser::getByCondition(['userId' => $this->userId]);
+
         $result['templateNames'] = [
             'head',
             'navbar',

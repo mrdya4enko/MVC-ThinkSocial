@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Models;
 
 use App\Components\ActiveRecord;
-
 /**
  * Created by PhpStorm.
  * User: bond
@@ -10,15 +10,14 @@ use App\Components\ActiveRecord;
  * Time: 13:29
  */
 
-class UserGroup extends ActiveRecord
+class GroupsAvatars extends ActiveRecord
 {
-    const USER_GROUP_OWNER = 4;
-    const USER_GROUP_SUBSCRIBER = 5;
-    protected static $tableName = 'users_groups';
+    const DEFAULT_AVATAR_PIC = "group-no-avatar.png";
+    protected static $tableName = 'groups_avatars';
     protected static $tableFields = [
                                      'id' => 'id',
+                                     'file_name' => 'fileName',
                                      'group_id' => 'groupId',
-                                     'user_id' => 'userId',
-                                     'role_id' => 'roleId',
+                                     'status' => 'status',
                                     ];
 }

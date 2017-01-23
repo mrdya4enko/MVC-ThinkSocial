@@ -7,14 +7,14 @@
         <div id="forFogging">
 
         </div>
-        <div class="w3-col m7">
+        <div class="w3-col m6">
 
             <div class="w3-row-padding">
                 <div class="w3-col m12">
                     <div class="w3-card-2 w3-round w3-white">
                         <div id="addAlbumBlock">
-                            <a id="cancelAlbumBlock" href="#"><img src="/public/pictures/icon/cancel.png" alt="cancel"></a>
-                            <form action="http://ts.local/albums/insert/" method="post" enctype="multipart/form-data">
+                            <a id="cancelAlbumBlock" href="#"><img src="/pictures/icon/cancel.png" alt="cancel"></a>
+                            <form action="/albums/insert/" method="post" enctype="multipart/form-data">
                                 <label for="albumName">Album name: </label>
                                 <input type="text" id="albumName" name="albumName" placeholder="Name" title="Name">
                                 <input type="submit" value="Submit">
@@ -28,16 +28,16 @@
                 </div>
             </div>
             <?php
-            foreach ($userAlbums as $oneUserAlbum):?>
+            foreach ($albumsUsers as $oneUserAlbum):?>
                 <?php
                 $count = count($oneUserAlbum->album->albumPhoto);
                 $date = substr($oneUserAlbum->album->createdAt, 0, 10);
                 ?>
                 <div class="blockAlbum w3-container w3-card-2 w3-white w3-round w3-margin">
                     <a href="/album/<?=$oneUserAlbum->album->id;?>"><p><h3><?=$oneUserAlbum->album->name;?></h3></p></a>
-                    <a class="deleteAlbum" href="http://ts.local/albums/delete/<?=$oneUserAlbum->album->id;?>"><img src="/public/pictures/icon/cancel.png" alt="delete"></a>
+                    <a class="deleteAlbum" href="/albums/delete/<?=$oneUserAlbum->album->id;?>"><img src="/pictures/icon/cancel.png" alt="delete"></a>
                     <?php if(isset($oneUserAlbum->album->albumPhoto[0])):?>
-                        <img src="/public/photos/<?=$oneUserAlbum->album->albumPhoto[0]->fileName;?>" class="photoOnAlbum w3-margin-bottom">
+                        <img src="/photos/<?=$oneUserAlbum->album->albumPhoto[0]->fileName;?>" class="photoOnAlbum w3-margin-bottom">
                     <?php endif;?>
                     <ul>
                         <li>Фотографий: <?=$count?></li>
