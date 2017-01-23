@@ -173,14 +173,6 @@ class User extends ActiveRecord
     }
 
 
-        public static function getUserName()
-    {
-        $userId = self::checkLogged();
-        $user = self::getUserById($userId);
-
-        return $user['firstName'];
-    }
-
     /**
      * Send mail to user
      * @param $mail
