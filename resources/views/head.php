@@ -11,6 +11,7 @@
 
     <script src="/public/js/jquery-3.1.1.min.js"></script>
     <script src="/public/js/addAlbum.js"></script>
+    <script src="/public/js/scaleThePhoto.js"></script>
 
     <style>
         html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}

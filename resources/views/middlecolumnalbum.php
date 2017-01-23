@@ -13,7 +13,7 @@
                 <div class="w3-col m12">
                     <div class="w3-card-2 w3-round w3-white">
                         <div id="addAlbumBlock">
-                            <a id="cancelAlbumBlock" href="#"><img src="/pictures/icon/cancel.png" alt="cancel"></a>
+                            <a id="cancelAlbumBlock" href="#"><img src="/public/pictures/icon/cancel.png" alt="cancel"></a>
                             <form action="/album/update/<?=$albumId;?>" method="post" enctype="multipart/form-data">
                                 <label for="albumName">New album name: </label>
                                 <input type="text" id="albumName" name="newAlbumName" placeholder="New name" title="New name">
@@ -22,7 +22,7 @@
                             </form>
                         </div>
                         <div id="addPhotoBlock">
-                            <a id="cancelAddPhotoBlock" href="#"><img src="/pictures/icon/cancel.png" alt="cancel"></a>
+                            <a id="cancelAddPhotoBlock" href="#"><img src="/public/pictures/icon/cancel.png" alt="cancel"></a>
                             <form action="/album/insert/<?=$albumId;?>" method="post" enctype="multipart/form-data">
                                 <input type="file" name="uploadPhoto" accept="image/jpeg,image/png" multiple>
                                 <input type="submit" value="Submit">
@@ -43,7 +43,10 @@
                     <div class="w3-container w3-card-2 w3-white w3-round w3-margin">
                         <p><h3><?=$oneUserAlbum->album->name;?></h3></p>
                         <?php foreach ($oneUserAlbum->album->albumPhoto as $photo):?>
-                            <img src="/public/photos/<?=$photo->fileName;?>" style="width:25%" class="w3-margin-bottom">
+                            <div class="photo">
+                                <img src="/public/photos/<?=$photo->fileName;?>" class="photoInAlbum w3-margin-bottom">
+                                <a href="/album/delete/<?=$photo->id;?>"><img src="/public/pictures/icon/deleteIcon.png" class="deleteIcon"></a>
+                            </div>
                         <?php endforeach;?>
                     </div>
                 <?php endif;?>

@@ -42,10 +42,6 @@
         position: absolute;
         right: 0;
     }
-    #addAlbumBlock form,
-    #addPhotoBlock form {
-
-    }
         #addAlbumBlock form label,
         #addPhotoBlock form label {
             margin: 25px;
@@ -82,7 +78,6 @@
             -o-transition: background-color .25s,color .15s,box-shadow .15s,opacity .25s,filter .25s,border .15s;
             transition: background-color .25s,color .15s,box-shadow .15s,opacity .25s,filter .25s,border .15s;
         }
-
 #addAlbumBlock.active,
 #addPhotoBlock.active {
     top: 80px;
@@ -98,11 +93,9 @@
     z-index: -99;
 }
 #forFogging.fogging {
-    opacity: 0.5;
     z-index: 99;
-    background: #000;
+    background:rgba(0,0,0,0.5);
 }
-
 .blockAlbum {
     width: 360px;
     height: 210px;
@@ -111,6 +104,14 @@
     margin-bottom: 0px;
     vertical-align: top;
     position: relative;
+
+    webkit-transition: background-color .25s;
+    -moz-transition: background-color .25s;
+    -o-transition: background-color .25s;
+    transition: background-color .25s;
+}
+.blockAlbum:hover {
+    background-color: #7d97a5;
 }
     .blockAlbum a {
         text-decoration: none;
@@ -147,4 +148,61 @@
     -moz-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
     -o-box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
     box-shadow: 0 0 9px 2px rgba(0,0,0,0.4);
+}
+.photo {
+    position: relative;
+    display: inline;
+    line-height: 45px;
+}
+    .photo a {
+        position: relative;
+        width: 10px;
+        display: inline-block;
+    }
+    .photoInAlbum {
+        width: 25%;
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
+    }
+    .deleteIcon {
+        height: 25px;
+        left: -1000%;
+        bottom: 25px;
+        position: absolute;
+        z-index: 0;
+
+        webkit-transition: bottom .5s ease;
+        -moz-transition: bottom .5s ease;
+        -o-transition: bottom .5s ease;
+        transition: bottom .5s ease;
+    }
+    .photo:hover .deleteIcon {
+        bottom: -7px;
+    }
+
+
+.popup {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: none;
+    text-align: center;
+    z-index: 98;
+}
+.popup_bg {
+    background: rgba(0,0,0,0.5);
+    position: absolute;
+    z-index: 99;
+    height: 100%;
+    width: 100%;
+}
+.popup_img {
+    position: relative;
+    margin: 55px auto;
+    z-index: 100;
+    max-height: 90%;
+    max-width: 90%;
 }
