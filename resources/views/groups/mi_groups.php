@@ -27,7 +27,7 @@
                     <a href="/groups/page/id<?= $Group->group->id;?>" class="group-card__group-name"> <?= $Group->group->name;?> </a>
                      <div class="group-card__desc"> <?= $Group->group->description;?> </div>
                 </div>
-                <a href="/groups/unsubscribe/id<?php echo $Group->group->id?>" class="group-card__subs w3-btn w3-ripple w3-red"> Unsubscribe </a>
+                <a href="/groups/unsubscribe/id<?= $Group->group->id?>" class="group-card__subs w3-btn w3-ripple w3-red"> Unsubscribe </a>
             </section>
             <?php endforeach; ?>
         </div>

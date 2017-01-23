@@ -351,8 +351,7 @@ abstract class ActiveRecord
         return self::getJoin($result);
     }
 
-
-    /**
+      /**
      * Выбирает из таблицы БД все записи; создает массив соответствующих объектов-
      * моделей; запускает рекурсивную функцию getJoin для прохождения дерева
      * присоединения моделей
@@ -365,6 +364,18 @@ abstract class ActiveRecord
     public static function getAll($addCondition='')
     {
         return self::getByCondition([], $addCondition);
+    }
+
+    public static function getByDirectSQL($condition, $query)
+    {
+//        $fields = self::getFieldsSelect();
+//        $conditionString = (! empty($condition))? self::getDBCondition($condition) : '';
+        $joinString = '';
+//        self::correctQueryJoinDB($fields, $joinString);
+        self::$queryString = $query;
+        $result = self::execSQL($condition, 'select');
+        return self::getJoin($result);
+
     }
 
 

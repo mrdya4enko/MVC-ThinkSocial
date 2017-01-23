@@ -29,7 +29,6 @@ class GroupController extends PageController
         UserGroup::clearJoinsDB();
         UserGroup::join('groupId', 'App\Models\Group', 'id');
         UserGroup::join('groupId', 'App\Models\GroupsAvatars', 'groupId', " AND status='active'");
-
         $response['myGroups'] = UserGroup::getByCondition([
             'userId' => $this->userId,
             'roleId' => UserGroup::USER_GROUP_OWNER]);
