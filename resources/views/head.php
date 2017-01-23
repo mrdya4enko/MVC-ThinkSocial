@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8"><title><?php echo $title?> - <?php echo $user->firstName?> <?php echo $user->lastName?></title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"><title><?=$title?> - <?=$user->firstName?> <?=$user->lastName?></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/css/w3.css">

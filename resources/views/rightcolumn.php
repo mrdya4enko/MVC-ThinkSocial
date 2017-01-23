@@ -17,7 +17,7 @@
                     <div class="w3-container">
                         <p>Friend Request</p>
 
-                        <img src="/public/avatars/<?=isset($friendReqs[0]->avatarFileName)? $friendReqs[0]->avatarFileName:'default.jpeg'?>" alt="Avatar" style="width:50%"><br>
+                        <img src="/avatars/<?=isset($friendReqs[0]->avatarFileName)? $friendReqs[0]->avatarFileName:'default.jpeg'?>" alt="Avatar" style="width:50%"><br>
                         <span><?=$friendReqs[0]->firstName?> <?=$friendReqs[0]->lastName?></span>
                         <div class="w3-row w3-opacity">
                             <div class="w3-half">
