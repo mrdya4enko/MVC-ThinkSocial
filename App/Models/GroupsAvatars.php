@@ -1,5 +1,8 @@
 <?php
+
 namespace App\Models;
+
+use App\Components\ActiveRecord;
 /**
  * Created by PhpStorm.
  * User: bond
@@ -9,6 +12,7 @@ namespace App\Models;
 
 class GroupsAvatars extends ActiveRecord
 {
+    const DEFAULT_AVATAR_PIC = "group-no-avatar.png";
     protected static $tableName = 'groups_avatars';
     protected static $tableFields = [
                                      'id' => 'id',

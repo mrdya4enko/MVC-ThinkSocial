@@ -14,7 +14,7 @@
             <section class="group-card">
                 <img src="<?php echo $findGroup->groupsAvatars[0]->fileName;?>" class="group-card__avatar" width="100px" height="100px">
                 <div class="group-desc">
-                    <a href="group/<?php echo $findGroup->group->id;?>" class="group-card__group-name"> <?php echo $findGroup->group->name;?> </a>
+                    <a href="/group/<?php echo $findGroup->group->id;?>" class="group-card__group-name"> <?php echo $findGroup->group->name;?> </a>
                     <div class="group-card__desc"> <?php echo $findGroup->group->description;?> </div>
                 </div>
                 <a href="#" class="group-card__subs w3-btn w3-ripple w3-indigo"> Subscribe </a>
