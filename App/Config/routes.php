@@ -37,6 +37,12 @@ return [
     'album/update/([0-9]+)' => 'album/updateAlbum/$1',
     'album/delete/([0-9]+)' => 'album/deletePhoto/$1',
 
+    /*****FRIENDS******/
+
+    'friend/accept' => 'friend/accept',
+    'friend/decline' => 'friend/decline',
+    'friend/incoming' => 'friend/incoming',
+
     /*****MAIN PAGE******/
 
     //Managing the user groups

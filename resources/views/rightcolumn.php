@@ -14,20 +14,23 @@
 
             <?php if (count($friendReqs)>0): ?>
                 <div class="w3-card-2 w3-round w3-white w3-center">
-                    <div class="w3-container">
-                        <p>Friend Request</p>
+                    <form name="friendrequest" action="" method="post">
+                        <div class="w3-container">
+                            <p>Friend Request</p>
 
-                        <img src="/avatars/<?=isset($friendReqs[0]->avatarFileName)? $friendReqs[0]->avatarFileName:'default.jpeg'?>" alt="Avatar" style="width:50%"><br>
-                        <span><?=$friendReqs[0]->firstName?> <?=$friendReqs[0]->lastName?></span>
-                        <div class="w3-row w3-opacity">
-                            <div class="w3-half">
-                                <button class="w3-btn w3-green w3-btn-block w3-section" title="Accept"><i class="fa fa-check"></i></button>
-                            </div>
-                            <div class="w3-half">
-                                <button class="w3-btn w3-red w3-btn-block w3-section" title="Decline"><i class="fa fa-remove"></i></button>
+                            <img src="/avatars/<?=isset($friendReqs[0]->avatarFileName)? $friendReqs[0]->avatarFileName:'default.jpeg'?>" alt="Avatar" style="width:50%"><br>
+                            <span><?=$friendReqs[0]->firstName?> <?=$friendReqs[0]->lastName?></span>
+                            <input type="hidden" name="friendRequestId" value="<?=$friendReqs[0]->id?>">
+                            <div class="w3-row w3-opacity">
+                                <div class="w3-half">
+                                    <button type="submit" formaction="/friend/accept/" class="w3-btn w3-green w3-btn-block w3-section" title="Accept"><i class="fa fa-check"></i></button>
+                                </div>
+                                <div class="w3-half">
+                                    <button type="submit" formaction="/friend/decline/" class="w3-btn w3-red w3-btn-block w3-section" title="Decline"><i class="fa fa-remove"></i></button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
                 <br>
             <?php endif ?>

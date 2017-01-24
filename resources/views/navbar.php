@@ -11,7 +11,7 @@
         <li class="w3-hide-small w3-dropdown-hover">
             <a href="#" class="w3-padding-large w3-hover-white" title="Notifications"><i class="fa fa-bell">Notifications</i><span class="w3-badge w3-right w3-small w3-green"><?=count($friendReqs)+$commentNewsNum+$commentPhotosNum+$commentAvatarNum?></span></a>
             <div class="w3-dropdown-content w3-white w3-card-4">
-                <a href="#"><?=count($friendReqs)?> new friend requests</a>
+                <a href="/friend/incoming/"><?=count($friendReqs)?> new friend requests</a>
                 <a href="#"><?=$commentNewsNum?> new comments to your news</a>
                 <a href="#"><?=$commentPhotosNum?> new comments to your photos</a>
                 <a href="#"><?=$commentAvatarNum?> new comments to your avatar</a>

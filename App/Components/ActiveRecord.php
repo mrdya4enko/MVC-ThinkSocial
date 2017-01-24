@@ -421,6 +421,13 @@ abstract class ActiveRecord
     }
 
 
+    public static function setStatus($id, $status)
+    {
+        self::$queryString = 'UPDATE ' . static::$tableName . " SET status=:status WHERE id=:id";
+        self::execSQL(['id' => $id, 'status' => $status], 'update');
+    }
+
+
     /**
      * Создает новую запись в таблице БД со значениями полей, равными значениям
      * полей объекта-модели

@@ -46,7 +46,7 @@ CREATE TABLE `friends` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_sender` INT(11) NOT NULL,
   `user_receiver` INT(11) NOT NULL,
-  `status` enum('applied','unapplied') NOT NULL DEFAULT 'unapplied',
+  `status` enum('applied','unapplied', 'declined') NOT NULL DEFAULT 'unapplied',
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -69,10 +69,10 @@ BEGIN
 			AND user_sender=NEW.user_receiver
 		INTO row_num;
 	IF row_num>0 THEN
-		SIGNAL SQLSTATE '02000' SET message_text="Такая дружба уже существует";
+		SIGNAL SQLSTATE '02000' SET message_text="This friendship request already exists";
 	END IF;
 	IF NEW.user_receiver=NEW.user_sender THEN
-		SIGNAL SQLSTATE '02000' SET message_text="Дружба с собой невозможна";
+		SIGNAL SQLSTATE '02000' SET message_text="It is impossible to be a friend of yourself";
 	END IF;
 END //
 DELIMITER ;
