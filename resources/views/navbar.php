@@ -17,6 +17,7 @@
                 <a href="#"><?=$commentAvatarNum?> new comments to your avatar</a>
             </div>
         </li>
+        <li class="w3-hide-small"><a href="/friend/index" class="w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user">My friends</i></a></li>
         <li class="w3-hide-small w3-right"><a href="/user/logout/" class="w3-padding-large w3-hover-white" title="Logout"><img src="/avatars/<?=$user->avatarFileName?>" class="w3-circle" style="height:25px;width:25px" alt="Avatar"></a></li>
     </ul>
 </div>

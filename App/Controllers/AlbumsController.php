@@ -23,6 +23,7 @@ class AlbumsController extends PageController
             'rightcolumn',
             'footer',
         ];
+        $result['title'] = 'My albums';
         return $result;
     }
 

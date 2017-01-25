@@ -14,7 +14,6 @@ class Friend extends ActiveRecord
 {
     protected static $tableName = 'friends';
     protected static $tableFields = [
-                                     'id' => 'id',
                                      'user_sender' => 'userSender',
                                      'user_receiver' => 'userReceiver',
                                      'status' => 'status',

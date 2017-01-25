@@ -15,6 +15,7 @@ class AlbumController extends PageController
         AlbumUser::join('albumId', 'App\Models\Album', 'id');
         Album::join('id', 'App\Models\AlbumPhoto', 'albumId', " AND status='active'");
         $result['userAlbums'] = AlbumUser::getByCondition(['userId' => $this->userId]);
+        $userAlbum = Album::getByID($id);
 
         $result['templateNames'] = [
             'head',
@@ -24,6 +25,7 @@ class AlbumController extends PageController
             'rightcolumn',
             'footer',
         ];
+        $result['title'] = $userAlbum->name;
         $result['albumId'] = $id;
         return $result;
     }
