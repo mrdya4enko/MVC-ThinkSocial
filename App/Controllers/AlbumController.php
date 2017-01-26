@@ -52,7 +52,7 @@ class AlbumController extends PageController
             $newPhoto->status = 'active';
             $newPhoto->insert();
         }
-        header('Location: /album/' . $id);
+            header('Location: /album/' . $id);
     }
 
     public function actionDeletePhoto($id)
@@ -67,11 +67,9 @@ class AlbumController extends PageController
     public function actionUpdateAlbum($id)
     {
         $this->userId = User::checkLogged();
-
         $userAlbum = Album::getByID($id);
         $userAlbum->name = $_POST['newAlbumName'];
         $userAlbum->update();
-        
         header('Location: /album/' . $id);
     }
 
