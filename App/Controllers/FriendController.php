@@ -19,7 +19,6 @@ class FriendController extends PageController
              OR user_receiver = $this->userId)
              AND status = 'applied'"
         );
-
         $countFriends = count($result['friends']);
 
         for ($i = 0; $i < $countFriends; $i++) {
@@ -29,19 +28,49 @@ class FriendController extends PageController
                 $result['friend'][] = $result['friends'][$i]->userSender;
             }
         }
+        $strFriends = '';
+        if (!empty($result['friend'])) {
+            $strFriends = implode(',', $result['friend']);
+        }
 
-        User::joinDB('users.id', 'users_avatars', 'user_id', ['id' => 'userAvatarId', 'file_name' => 'avatarFileName'],
-            true, " AND users_avatars.status = 'active'");
 
+        $result['myFriend'] = User::getByDirectSQL(
+            ['userId' => $this->userId],
+            "SELECT first_name as firstName, last_name as lastName, id 
+             FROM users
+             WHERE id IN ($strFriends)"
+        );
+
+        $avatar = User::getByDirectSQL(
+            ['userId' => $this->userId],
+            "SELECT user_id as userId, file_name as fileName, status as status
+             FROM users_avatars
+             WHERE user_id IN ($strFriends)"
+        );
+
+        $avatarUserId = [];
+        $countAvatar = count($avatar);
+        for ($i = 0; $i < $countAvatar; $i++) {
+            $avatarUserId[] = $avatar[$i]->userId;
+        }
+        
         for ($i = 0; $i < $countFriends; $i++) {
-            $showFriend = $result['friend'][$i];
-            $var = User::getByDirectSQL(
-               ['userId' => $this->userId],
-               "SELECT distinct first_name as firstName, last_name as lastName, id FROM users WHERE id = $showFriend"
-           );
-            $friends[$i] = User::getByID($result['friend'][$i]);
-            $var[0]->avatarFileName = $friends[$i]->avatarFileName ?? 'default.jpeg';
-            $result['myFriend'][$i] = $var[0];
+            if (!empty($result['friend']) || !empty($avatarUserId)) {
+
+                $searchAvatarFriend = in_array($result['friend'][$i], $avatarUserId);
+
+                if (!$searchAvatarFriend) {
+                    $result['myFriend'][$i]->avatarFileName = 'default.jpeg';
+                } else {
+                    for ($k = 0; $k < $countFriends; $k++) {
+                        for ($j = 0; $j < $countAvatar; $j++) {
+                            if ($result['myFriend'][$k]->id == $avatar[$j]->userId) {
+                                $result['myFriend'][$k]->avatarFileName = $avatar[$j]->fileName;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         $result['templateNames'] = [
@@ -68,7 +97,9 @@ class FriendController extends PageController
              OR user_receiver = $this->userId)
              AND status = 'applied'"
         );
+
         $countFriends = count($result['request']);
+
         for ($i = 0; $i < $countFriends; $i++) {
             if ($result['request'][$i]->userSender === $this->userId) {
                 $result['friend'][] = $result['request'][$i]->userReceiver;
@@ -79,28 +110,60 @@ class FriendController extends PageController
 
         $result['people'] = User::getByDirectSQL(
             ['userId' => $this->userId],
-            "SELECT distinct first_name as firstName, last_name as lastName, id 
+            "SELECT first_name as firstName, last_name as lastName, id 
              FROM users 
              WHERE status = 'active' 
              AND id != $this->userId"
         );
 
-        $countPeople = count($result['people']);
-        for ($i = 0; $i < $countPeople; $i++) {
-            $peoplesId[] = $result['people'][$i]->id;
+        $avatar = User::getByDirectSQL(
+            ['userId' => $this->userId],
+            "SELECT user_id as userId, file_name as fileName, status as status
+             FROM users_avatars
+             WHERE user_id != $this->userId"
+        );
+        $countAvatar = count($avatar);
+        for ($i = 0; $i < $countAvatar; $i++) {
+            $avatarUserId[] = $avatar[$i]->userId;
         }
+        
+        $countPeople = count($result['people']);
 
         for ($i = 0; $i < $countPeople; $i++) {
-            if (!empty($result['friend'])) {
-                $searchFriend = in_array($peoplesId[$i], $result['friend']);
-                if ($searchFriend) {
-                    $result['people'][$i]->checkFriend = 'friend';
+
+            $peopleId[] = $result['people'][$i]->id;
+
+            if (!empty($result['people'])) {
+
+                $searchAvatarPeople = in_array($result['people'][$i]->id, $avatarUserId);
+                
+                if (!empty($result['friend'])) {
+
+                    $searchFriend = in_array($peopleId[$i], $result['friend']);
+
+                    if ($searchFriend) {
+                        $result['people'][$i]->checkFriend = 'friend';
+                    } else {
+                        $result['people'][$i]->checkFriend = 'unFriend';
+                    }
                 } else {
-                $result['people'][$i]->checkFriend = 'unFriend';
+                    $result['people'][$i]->checkFriend = 'unFriend';
+                }
+
+                if (!$searchAvatarPeople) {
+                    $result['people'][$i]->avatarFileName = 'default.jpeg';
+                } else {
+                    for ($k = 0; $k < $countPeople; $k++) {
+                        for ($j = 0; $j < $countAvatar; $j++) {
+                            if ($result['people'][$k]->id == $avatar[$j]->userId) {
+                                $result['people'][$k]->avatarFileName = $avatar[$j]->fileName;
+                            }
+                        }
+                    }
                 }
             }
         }
-
+        
         $result['templateNames'] = [
             'head',
             'navbar',
